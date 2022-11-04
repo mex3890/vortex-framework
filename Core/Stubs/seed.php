@@ -5,7 +5,7 @@ namespace App\Seeds;
 use Core\Abstractions\Seeder;
 use Core\Database\Seed;
 
-class MountSeeder extends Seeder
+class MountSeed extends Seeder
 {
     public function handler(): void
     {
