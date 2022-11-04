@@ -1,0 +1,24 @@
+{
+    "name": "vortex-framework/vortex-framework",
+    "description": "description",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Caio Albuquerque",
+            "email": "abcv.tenorio@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Core\\": "Core/"
+        }
+    },
+    "require": {
+        "ext-pdo": "*",
+        "vlucas/phpdotenv": "^5.4",
+        "symfony/console": "^6.1",
+        "phpmailer/phpmailer": "^6.6",
+        "smarty/smarty": "^4.2"
+    }
+}
