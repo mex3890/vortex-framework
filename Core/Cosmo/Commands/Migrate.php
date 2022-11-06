@@ -5,9 +5,7 @@ namespace Core\Cosmo\Commands;
 use Core\Cosmo\Cosmo;
 use Core\Database\Schema;
 use Core\Helpers\ClassManager;
-use Core\Helpers\CommandMounter;
 use Core\Helpers\FileDirManager;
-use Core\Helpers\StringFormatter;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -58,7 +56,8 @@ class Migrate extends Command
             if (!in_array($this->file_name, $this->ran_migrations)) {
                 include self::MIGRATION_ROOT_PATH . $this->file_name;
                 $classes = get_declared_classes();
-                $class = end($classes);
+                $count = count($classes) - 2;
+                $class = $classes[$count];
 
                 ClassManager::callStaticFunction($class, 'up');
 
@@ -73,11 +72,12 @@ class Migrate extends Command
             }
         } else {
             foreach ($files as $file) {
-                include self::MIGRATION_ROOT_PATH . $file;
-                $classes = get_declared_classes();
-                $class = end($classes);
-
                 if (!in_array($file, $this->ran_migrations)) {
+                    include self::MIGRATION_ROOT_PATH . $file;
+                    $classes = get_declared_classes();
+                    $count = count($classes) - 2;
+                    $class = $classes[$count];
+
                     ClassManager::callStaticFunction($class, 'up');
                     $this->cosmo->fileSuccessRow($file, 'run');
 
