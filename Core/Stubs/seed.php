@@ -7,7 +7,7 @@ use Core\Database\Seed;
 
 class MountSeed extends Seeder
 {
-    public function handler(): void
+    public static function handler(): void
     {
         Seed::run('$table', [
             'column_1' => 'value_1',
