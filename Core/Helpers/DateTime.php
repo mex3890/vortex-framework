@@ -16,7 +16,7 @@ class DateTime
 
     public static function currentDateTime(): string
     {
-        return date($_ENV['DATE_TIME_FORMAT']);
+        return date($_ENV['DATE_FORMAT'] . ' ' . $_ENV['TIME_FORMAT']);
     }
 
     public static function retrieveCurrentMillisecond(): float
