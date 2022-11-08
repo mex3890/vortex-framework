@@ -19,6 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class VortexInstall extends Command
 {
     private Cosmo $cosmo;
+    private int $steps = 0;
+    private const SUCCESS_STEP_COUNT = 3;
 
     public function __construct(string|null $file_name = null)
     {
@@ -35,7 +37,13 @@ class VortexInstall extends Command
         $this->runFirstsMigrations();
         $this->setDefaultTimeZone();
         $this->cosmo->finish();
-        $this->cosmo->commandSuccess('list');
+
+        if ($this->steps === self::SUCCESS_STEP_COUNT) {
+            $this->cosmo->commandSuccess('installation');
+        } else {
+            $this->cosmo->commandFail('installation');
+        }
+
         return Command::SUCCESS;
     }
 
@@ -49,6 +57,7 @@ class VortexInstall extends Command
         try {
             MigrationsTable::up();
             $this->cosmo->fileSuccessRow('first migrations', 'success');
+            $this->steps++;
         } catch (PDOException $exception) {
             $this->cosmo->fileFailRow('first migrations', 'failed');
         }
@@ -60,6 +69,7 @@ class VortexInstall extends Command
             $env = Dotenv::createImmutable(__DIR__ . '/../../../../../../');
             $env->load();
             $this->cosmo->fileSuccessRow('load environment', 'success');
+            $this->steps++;
         } catch (Exception $exception) {
             $this->cosmo->fileFailRow('load environment', 'failed');
         }
@@ -70,6 +80,7 @@ class VortexInstall extends Command
         try {
             date_default_timezone_set($_ENV['TIME_ZONE'] ?? 'America/Sao_Paulo');
             $this->cosmo->fileSuccessRow('set time zone', 'success');
+            $this->steps++;
         } catch (Exception $exception) {
             $this->cosmo->fileFailRow('set time zone', 'failed');
         }
