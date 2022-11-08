@@ -10,7 +10,18 @@ class Route
 {
     public function __construct()
     {
-        session_start();
+        if (session_id() === '') {
+            session_start();
+        }
+
+        if(empty($_SESSION['ERROR'])) {
+            $_SESSION['ERROR'] = '';
+        }
+    }
+
+    private function setLastGetRoute(string $route): void
+    {
+        $_SESSION['LAST_ROUTE'] = $route;
     }
 
     /**
@@ -19,6 +30,7 @@ class Route
     public function get(string $route, $path_to_include): void
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            $this->setLastGetRoute($route);
             $this->route($route, $path_to_include);
         }
     }
