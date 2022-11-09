@@ -32,6 +32,8 @@ function view(string $view_name, array $params = []): void
 
 #[NoReturn] function dd(...$vars): void
 {
-    var_dump($vars);
+    foreach ($vars as $var) {
+        echo '<pre>' . var_export($var, true) . '</pre>';
+    }
     die();
 }

@@ -6,6 +6,8 @@ use Core\Abstractions\Controller;
 
 class MountController extends Controller
 {
+    public static array $rules = [];
+    public static array $feedback = [];
 
     public static function index()
     {
