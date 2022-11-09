@@ -6,7 +6,7 @@ class Hash
 {
     private const HASH_ALGORITHM = 'hash_algorithm';
     private const HASH_ALGORITHM_COST = 'hash_algorithm';
-    private const DEFAULT_HASH_ALGORITHM = 'rasmuslerdorf';
+    private const DEFAULT_HASH_ALGORITHM = '2y';
     private const DEFAULT_HASH_ALGORITHM_COST = 12;
 
     public static function hashPassword(string $password): string
