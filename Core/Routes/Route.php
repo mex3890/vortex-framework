@@ -13,10 +13,6 @@ class Route
         if (session_id() === '') {
             session_start();
         }
-
-        if(empty($_SESSION['ERROR'])) {
-            $_SESSION['ERROR'] = '';
-        }
     }
 
     private function setLastGetRoute(string $route): void
@@ -40,6 +36,7 @@ class Route
      */
     public function post(string $route, $path_to_include): void
     {
+        $_SESSION['ERROR'] = '';
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->route($route, $path_to_include);
         }
