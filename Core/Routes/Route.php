@@ -37,6 +37,7 @@ class Route
     public function post(string $route, $path_to_include): void
     {
         $_SESSION['ERROR'] = '';
+        $_SESSION['OLD_ATTRIBUTES'] = '';
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->route($route, $path_to_include);
         }
