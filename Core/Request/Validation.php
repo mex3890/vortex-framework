@@ -11,6 +11,7 @@ class Validation
         $errors = [];
 
         unset($_SESSION['ERROR']);
+        unset($_SESSION['OLD_ATTRIBUTES']);
 
         foreach ($args as $key => $value) {
 
@@ -34,10 +35,12 @@ class Validation
 
         if (!empty($errors)) {
             $_SESSION['ERROR'] = $errors;
+            $_SESSION['OLD_ATTRIBUTES'] = $args;
             back();
         }
 
         $_SESSION['ERROR'] = '';
+        $_SESSION['OLD_ATTRIBUTES'] = '';
         return true;
     }
 
