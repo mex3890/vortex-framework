@@ -50,9 +50,15 @@ function error(string $key)
 
 function hasError(string $key): bool
 {
-    if ($_SESSION['ERROR'] != '') {
-        return key_exists($key, $_SESSION['ERROR']);
+    if (!empty($_SESSION['ERROR'])) {
+        if ($_SESSION['ERROR'] != '') {
+            return key_exists($key, $_SESSION['ERROR']);
+        }
     }
-
     return false;
+}
+
+function content(string $path): string
+{
+    return $_ENV['APP_URL'] . "/$path";
 }
