@@ -43,18 +43,27 @@ function old(string $key)
     return $_SESSION['OLD_ATTRIBUTES'][$key] ?? '';
 }
 
-function error(string $key)
+function error(string $key = null)
 {
-    return $_SESSION['ERROR'][$key][0] ?? '';
+    if ($key && key_exists($key, $_SESSION['ERROR'])) {
+        return $_SESSION['ERROR'][$key][0];
+    } elseif ($key) {
+        return '';
+    }
+
+    return $_SESSION['ERROR'] ?? '';
 }
 
-function hasError(string $key): bool
+function hasError(string $key = null): bool
 {
-    if (!empty($_SESSION['ERROR'])) {
+    if ($key && !empty($_SESSION['ERROR'])) {
         if ($_SESSION['ERROR'] != '') {
             return key_exists($key, $_SESSION['ERROR']);
         }
+    } elseif (!empty($_SESSION['ERROR'])) {
+        return true;
     }
+
     return false;
 }
 
