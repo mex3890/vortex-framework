@@ -27,5 +27,13 @@ class Galaxy
         $view = __DIR__ . '/../../../../../Resources/views/' . $view;
         $this->smarty->assign($args);
         $this->smarty->display($view);
+
+        if (key_exists('OLD_ATTRIBUTES', $_SESSION)) {
+            $_SESSION['OLD_ATTRIBUTES'] = '';
+        }
+
+        if(key_exists('ERROR', $_SESSION)) {
+            $_SESSION['ERROR'] = '';
+        }
     }
 }
