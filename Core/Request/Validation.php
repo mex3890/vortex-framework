@@ -2,6 +2,7 @@
 
 namespace Core\Request;
 
+use Core\Helpers\Environment;
 use Core\Helpers\StringFormatter;
 use DateTime;
 
@@ -10,6 +11,12 @@ class Validation
     private const VALIDATION_CLASS = 'Core\Request\Validation';
     private const FILE_REQUIRED_KEYS = ['name', 'full_path', 'type', 'tmp_name', 'size'];
 
+    /**
+     * @param array $args
+     * @param array $rules
+     * @param array $feedback
+     * @return bool
+     */
     public static function check(array $args, array $rules, array $feedback): bool
     {
         $errors = [];
@@ -71,15 +78,10 @@ class Validation
         return true;
     }
 
-    private static function email($email): bool|string
-    {
-        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return true;
-        }
-
-        return 'email';
-    }
-
+    /**
+     * @param $bool
+     * @return bool|string
+     */
     private static function bool($bool): bool|string
     {
         if (filter_var($bool, FILTER_VALIDATE_BOOL)) {
@@ -89,6 +91,10 @@ class Validation
         return 'bool';
     }
 
+    /**
+     * @param $boolean
+     * @return bool|string
+     */
     private static function boolean($boolean): bool|string
     {
         if (filter_var($boolean, FILTER_VALIDATE_BOOLEAN)) {
@@ -98,65 +104,65 @@ class Validation
         return 'boolean';
     }
 
-    private static function float($float, $min = null, $max = null): bool|string
+    /**
+     * @param string $date
+     * @param string|null $format
+     * @return bool|string
+     */
+    private static function date(string $date, ?string $format = null): bool|string
     {
-        if (!is_null($max) && !is_null($min) && is_float($float)) {
-            if ($float < $min) {
-                return 'float.min';
-            } elseif ($float > $max) {
-                return 'float.max';
-            }
+        if (!$format) {
+            $format = $_ENV['DATE_FORMAT'];
         }
 
-        if (filter_var($float, FILTER_VALIDATE_FLOAT)) {
+        $formatted_date = DateTime::createFromFormat($format, $date);
+
+        if ($formatted_date && $formatted_date->format($format) === $date) {
             return true;
         }
 
-        return 'float';
+        return 'date';
     }
 
-    private static function int($int, $min = null, $max = null): bool|string
+    /**
+     * @param string $date
+     * @param string|null $format
+     * @return bool|string
+     */
+    private static function date_time(string $date, ?string $format = null): bool|string
     {
-        if (!is_null($max) && !is_null($min) && is_int($int)) {
-            if ($int < $min) {
-                return 'int.min';
-            } elseif ($int > $max) {
-                return 'int.max';
-            }
+        if (strpos($date, 'T')) {
+            $date = str_replace('T', ' ', $date);
         }
 
-        if (filter_var($int, FILTER_VALIDATE_INT)) {
+        if (strlen($date) === 16) {
+            $date .= ':00';
+        }
+
+        if (!$format) {
+            $format = Environment::dateTimeFormat();
+        }
+
+        $formatted_date = DateTime::createFromFormat($format, $date);
+
+        if ($formatted_date && $formatted_date->format($format) === $date) {
             return true;
         }
 
-        return 'int';
+        return 'date_time';
     }
 
-    private static function url($url): bool|string
+    /**
+     * @param string $email
+     * @return bool|string
+     */
+    private static function email(string $email): bool|string
     {
-        if (filter_var($url, FILTER_VALIDATE_URL)) {
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return true;
         }
 
-        return 'url';
-    }
-
-    private static function string($string, $min = null, $max = null): bool|string
-    {
-        if (!is_null($max) && !is_null($min) && is_string($string)) {
-            $length = strlen($string);
-            if ($length < $min) {
-                return 'string.min';
-            } elseif ($length > $max) {
-                return 'string.max';
-            }
-        }
-
-        if (is_string($string)) {
-            return true;
-        }
-
-        return 'string';
+        return 'email';
     }
 
     /**
@@ -165,7 +171,7 @@ class Validation
      * @param int $limit
      * @return bool|string
      */
-    private static function file(array $file, array $extensions = null, int $limit = -1): bool|string
+    private static function file(array $file, ?array $extensions = null, int $limit = -1): bool|string
     {
         if (self::isPostFile($file)) {
             if ($limit === -1 || $file['size'] <= $limit * 1024) {
@@ -191,21 +197,28 @@ class Validation
         return 'file';
     }
 
-    private static function required($arg): bool|string
+
+    /**
+     * @param float|int $float
+     * @param int|null $min
+     * @param int|null $max
+     * @return bool|string
+     */
+    private static function float(float|int $float, ?int $min = null, ?int $max = null): bool|string
     {
-        if (is_array($arg)) {
-            foreach ($arg as $value) {
-                if ($value === '') {
-                    return 'required';
-                }
+        if (!is_null($max) && !is_null($min) && is_float($float)) {
+            if ($float < $min) {
+                return 'float.min';
+            } elseif ($float > $max) {
+                return 'float.max';
             }
         }
 
-        if (isset($arg) && $arg !== '') {
+        if (filter_var($float, FILTER_VALIDATE_FLOAT)) {
             return true;
         }
 
-        return 'required';
+        return 'float';
     }
 
     /**
@@ -214,7 +227,7 @@ class Validation
      * @param int $limit
      * @return bool|string
      */
-    private static function image(array $image, array $extensions = null, int $limit = -1): bool|string
+    private static function image(array $image, ?array $extensions = null, int $limit = -1): bool|string
     {
         if (self::isPostFile($image)) {
             if ($limit === -1 || $image['size'] <= $limit * 1024) {
@@ -240,21 +253,150 @@ class Validation
         return 'image';
     }
 
-    private static function date(string $date, string $format = null): bool|string
+    /**
+     * @param $int
+     * @param int|null $min
+     * @param int|null $max
+     * @return bool|string
+     */
+    private static function int($int, ?int $min = null, ?int $max = null): bool|string
     {
-        if (!$format) {
-            $format = $_ENV['DATE_FORMAT'];
+        if (!is_null($max) && !is_null($min) && is_int($int)) {
+            if ($int < $min) {
+                return 'int.min';
+            } elseif ($int > $max) {
+                return 'int.max';
+            }
         }
 
-        $formatted_date = DateTime::createFromFormat($format, $date);
-
-        if ($formatted_date && $formatted_date->format($format) === $date) {
+        if (filter_var($int, FILTER_VALIDATE_INT)) {
             return true;
         }
 
-        return 'date';
+        return 'int';
     }
 
+    /**
+     * @param string $password
+     * @param array|null $requisitions
+     * @return bool|string
+     */
+    private static function password(string $password, ?array $requisitions = null): bool|string
+    {
+        if (!empty($requisitions)) {
+            foreach ($requisitions as $requisition) {
+                switch ($requisition) {
+                    case 'number':
+                        if (!preg_match('/\d/', $password)) {
+                            return 'password.number';
+                        }
+                        break;
+                    case 'upper-case':
+                        if (!preg_match('/[A-Z]/', $password)) {
+                            return 'password.upper-case';
+                        }
+                        break;
+                    case 'lower-case':
+                        if (!preg_match('/[a-z]/', $password)) {
+                            return 'password.lower-case';
+                        }
+                        break;
+                    case 'special-character':
+                        if (!preg_match('/[!@#$%^&*()_+\-=\[\]{};\':"\\\|,.<>\/?°]/', $password)) {
+                            return 'password.special-character';
+                        }
+                        break;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param mixed $arg
+     * @return bool|string
+     */
+    private static function required(mixed $arg): bool|string
+    {
+        if (is_array($arg)) {
+            foreach ($arg as $value) {
+                if ($value === '') {
+                    return 'required';
+                }
+            }
+        }
+
+        if (isset($arg) && $arg !== '') {
+            return true;
+        }
+
+        return 'required';
+    }
+    /**
+     * @param $string
+     * @param int|null $min
+     * @param int|null $max
+     * @return bool|string
+     */
+    private static function string($string, ?int $min = null, ?int $max = null): bool|string
+    {
+        if (!is_null($max) && !is_null($min) && is_string($string)) {
+            $length = strlen($string);
+            if ($length < $min) {
+                return 'string.min';
+            } elseif ($length > $max) {
+                return 'string.max';
+            }
+        }
+
+        if (is_string($string)) {
+            return true;
+        }
+
+        return 'string';
+    }
+
+    /**
+     * @param string $time
+     * @param string|null $format
+     * @return bool|string
+     */
+    private static function time(string $time, ?string $format = null): bool|string
+    {
+        if (strlen($time) === 5) {
+            $time .= ':00';
+        }
+
+        if (!$format) {
+            $format = Environment::timeFormat();
+        }
+
+        $formatted_date = DateTime::createFromFormat($format, $time);
+
+        if ($formatted_date && $formatted_date->format($format) === $time) {
+            return true;
+        }
+
+        return 'date_time';
+    }
+
+    /**
+     * @param string $url
+     * @return bool|string
+     */
+    private static function url(string $url): bool|string
+    {
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            return true;
+        }
+
+        return 'url';
+    }
+
+    /**
+     * @param array $file
+     * @return bool
+     */
     private static function isPostFile(array $file): bool
     {
         $is_file = true;
