@@ -65,6 +65,10 @@ abstract class Model
 
         $result = [];
 
+        if (empty($models)) {
+            return [];
+        }
+        
         if (count($models) > 1) {
             foreach ($models as $model) {
                 $object = new static($model);
