@@ -13,6 +13,7 @@ class Request
     private const SCRIPT_FILENAME = 'SCRIPT_FILENAME';
     private const REQUEST_METHOD = 'REQUEST_METHOD';
     private const REQUEST_URI = 'REQUEST_URI';
+    private const APP_URL = 'APP_URL';
 
     public function attributes(): array
     {
@@ -72,5 +73,10 @@ class Request
     public function url()
     {
         return $_SERVER[self::APP_URL];
+    }
+
+    public function files(): array
+    {
+        return $_FILES;
     }
 }
