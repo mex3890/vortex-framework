@@ -23,7 +23,6 @@ class Seed extends Command
 
     public function __construct(string|null $file_name = null)
     {
-
         $this->cosmo = new Cosmo();
         parent::__construct();
     }
@@ -31,6 +30,9 @@ class Seed extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->cosmo->start($output, true, true);
+
+        $this->cosmo->title('seeder', 'run');
+
         $this->cosmo->indexRow('seeder', 'run');
 
         $this->file_names = $input->getArgument('seed');

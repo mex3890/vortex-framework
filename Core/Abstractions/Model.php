@@ -8,7 +8,7 @@ abstract class Model
 {
     protected string $table = '';
 
-    protected string $id;
+    public string $id;
 
     protected array $args;
 
@@ -54,7 +54,7 @@ abstract class Model
         return Schema::last($model->table, $column);
     }
 
-    public static function get(array|string $select_columns = '*', string $search_column = null, string|int $value = null, string $operator = '='): Model|array
+    public static function get(array|string $select_columns = '*', string $search_column = null, string|int $value = null, string $operator = '='): array|Model
     {
         $models = new static([]);
         if (is_null($search_column) && is_null($value)) {
@@ -65,9 +65,34 @@ abstract class Model
 
         $result = [];
 
-        foreach ($models as $model) {
-            $model = new static($model);
-            $result[] = $model;
+        if (empty($models)) {
+            return [];
+        }
+
+        if (count($models) > 1) {
+            foreach ($models as $model) {
+                $object = new static($model);
+
+                foreach ($object->args as $key => $arg) {
+                    $object->$key = $arg;
+                }
+
+                unset($object->args);
+                unset($object->query);
+                unset($object->table);
+                $result[] = $object;
+            }
+        } else {
+            $object = new static($models[0]);
+
+            foreach ($object->args as $key => $arg) {
+                $object->$key = $arg;
+            }
+
+            unset($object->args);
+            unset($object->query);
+            unset($object->table);
+            $result = $object;
         }
 
         return $result;
