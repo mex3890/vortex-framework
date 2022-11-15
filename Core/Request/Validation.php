@@ -357,13 +357,13 @@ class Validation
         }
 
         if (!is_null($max) && $max > 1) {
-            if ($string > $max) {
+            if (strlen($string) > $max) {
                 return 'string.max';
             }
         }
 
         if (!is_null($min) && $min > 1) {
-            if ($string < $min) {
+            if (strlen($string) < $min) {
                 return 'string.min';
             }
         }
