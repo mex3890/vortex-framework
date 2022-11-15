@@ -88,6 +88,15 @@ class Environment
         return $_ENV[self::TIME_FORMAT] ?? null;
     }
 
+    public static function dateTimeFormat(): ?string
+    {
+        if (key_exists('DATE_FORMAT', $_ENV) && key_exists('TIME_FORMAT', $_ENV)) {
+            return $_ENV['DATE_FORMAT'] . ' ' . $_ENV['TIME_FORMAT'];
+        }
+
+        return null;
+    }
+
     public static function mailHost()
     {
         return $_ENV[self::MAIL_HOST] ?? null;
