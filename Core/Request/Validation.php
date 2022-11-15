@@ -197,28 +197,33 @@ class Validation
         return 'file';
     }
 
-
     /**
-     * @param float|int $float
+     * @param float|int|string $float
      * @param int|null $min
      * @param int|null $max
      * @return bool|string
      */
-    private static function float(float|int $float, ?int $min = null, ?int $max = null): bool|string
+    private static function float(float|int|string $float, ?int $min = null, ?int $max = null): bool|string
     {
-        if (!is_null($max) && !is_null($min) && is_float($float)) {
-            if ($float < $min) {
-                return 'float.min';
-            } elseif ($float > $max) {
+        if (preg_match('/^[-+]?\d*\.?\d+$/', $float)) {
+            $float = floatval($float);
+        } else {
+            return 'float';
+        }
+
+        if (!is_null($max)) {
+            if ($float > $max) {
                 return 'float.max';
             }
         }
 
-        if (filter_var($float, FILTER_VALIDATE_FLOAT)) {
-            return true;
+        if (!is_null($min)) {
+            if ($float < $min) {
+                return 'float.min';
+            }
         }
 
-        return 'float';
+        return true;
     }
 
     /**
@@ -254,26 +259,32 @@ class Validation
     }
 
     /**
-     * @param $int
+     * @param int|string $int
      * @param int|null $min
      * @param int|null $max
      * @return bool|string
      */
     private static function int($int, ?int $min = null, ?int $max = null): bool|string
     {
-        if (!is_null($max) && !is_null($min) && is_int($int)) {
-            if ($int < $min) {
-                return 'int.min';
-            } elseif ($int > $max) {
+        if (preg_match('/^[-+]?[0-9]+$/', $int)) {
+            $int = intval($int);
+        } else {
+            return 'int';
+        }
+
+        if (!is_null($max)) {
+            if ($int > $max) {
                 return 'int.max';
             }
         }
 
-        if (filter_var($int, FILTER_VALIDATE_INT)) {
-            return true;
+        if (!is_null($min)) {
+            if ($int < $min) {
+                return 'int.min';
+            }
         }
 
-        return 'int';
+        return true;
     }
 
     /**
@@ -332,6 +343,7 @@ class Validation
 
         return 'required';
     }
+
     /**
      * @param $string
      * @param int|null $min
@@ -340,20 +352,23 @@ class Validation
      */
     private static function string($string, ?int $min = null, ?int $max = null): bool|string
     {
-        if (!is_null($max) && !is_null($min) && is_string($string)) {
-            $length = strlen($string);
-            if ($length < $min) {
-                return 'string.min';
-            } elseif ($length > $max) {
+        if (!is_string($string)) {
+            return 'string';
+        }
+
+        if (!is_null($max) && $max > 1) {
+            if ($string > $max) {
                 return 'string.max';
             }
         }
 
-        if (is_string($string)) {
-            return true;
+        if (!is_null($min) && $min > 1) {
+            if ($string < $min) {
+                return 'string.min';
+            }
         }
 
-        return 'string';
+        return true;
     }
 
     /**
