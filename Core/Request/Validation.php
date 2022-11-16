@@ -412,7 +412,7 @@ class Validation
 
         return 'unique';
     }
-    
+
     /**
      * @param string $url
      * @return bool|string
