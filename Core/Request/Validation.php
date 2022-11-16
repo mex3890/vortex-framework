@@ -2,6 +2,7 @@
 
 namespace Core\Request;
 
+use Core\Database\Schema;
 use Core\Helpers\Environment;
 use Core\Helpers\StringFormatter;
 use DateTime;
@@ -393,6 +394,23 @@ class Validation
         }
 
         return 'date_time';
+    }
+
+    /**
+     * @param $arg
+     * @param $table
+     * @param $column
+     * @return bool|string
+     */
+    private static function unique($arg, $table, $column): bool|string
+    {
+        $search = Schema::select($table, $column)->where($column, $arg)->make();
+
+        if (empty($search)) {
+            return true;
+        }
+
+        return 'unique';
     }
 
     /**
