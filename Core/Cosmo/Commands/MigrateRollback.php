@@ -78,7 +78,8 @@ class MigrateRollback extends Command
                 if (in_array($this->file_name, $this->ran_migrations)) {
                     include self::MIGRATION_ROOT_PATH . $this->file_name;
                     $classes = get_declared_classes();
-                    $class = end($classes);
+                    $count = count($classes) - 2;
+                    $class = $classes[$count];
 
                     ClassManager::callStaticFunction($class, 'down');
 
@@ -113,7 +114,8 @@ class MigrateRollback extends Command
             if (in_array($migration, $this->ran_migrations)) {
                 include self::MIGRATION_ROOT_PATH . $migration;
                 $classes = get_declared_classes();
-                $class = end($classes);
+                $count = count($classes) - 2;
+                $class = $classes[$count];
 
                 ClassManager::callStaticFunction($class, 'down');
 
