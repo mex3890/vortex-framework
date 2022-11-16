@@ -2,6 +2,7 @@
 
 namespace Core\Routes;
 
+use Core\Helpers\ClassManager;
 use Core\Request\Request;
 use Exception;
 use SmartyException;
@@ -13,6 +14,21 @@ class Route
         if (session_id() === '') {
             session_start();
         }
+    }
+
+    public function middleware(array|string $middlewareClasses): static
+    {
+        if (is_array($middlewareClasses)) {
+            foreach ($middlewareClasses as $class) {
+                ClassManager::callStaticFunction($class, 'handle');
+            }
+
+            return $this;
+        }
+
+        ClassManager::callStaticFunction($middlewareClasses, 'handle');
+
+        return $this;
     }
 
     private function setLastGetRoute(string $route): void
@@ -110,14 +126,12 @@ class Route
             return;
         }
 
-        $parameters = [];
         $galaxy_params = [];
         for ($i = 0; $i < count($route_parts); $i++) {
             $route_part = $route_parts[$i];
             if (preg_match("/^[$]/", $route_part)) {
                 $galaxy_params[str_replace('$', '', $route_part)] = $request_url_parts[$i];
                 $route_part = ltrim($route_part, '$');
-                $parameters[] = $request_url_parts[$i];
                 $$route_part = $request_url_parts[$i];
             } else if ($route_parts[$i] != $request_url_parts[$i]) {
                 return;
