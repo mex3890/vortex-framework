@@ -17,17 +17,55 @@ function view(string $view_name, array $params = []): void
     $galaxy->render($view_name, $params);
 }
 
-#[NoReturn] function redirect(string $route, int $code = 200): void
+#[NoReturn] function redirect(string $route, array $args = null, array $errors = null, int $code = 200): void
 {
+    if (!empty($args)) {
+        foreach ($args as $key => $arg) {
+            $_GET[$key] = $arg;
+        }
+    }
+
+    if (!empty($errors)) {
+        foreach ($errors as $key => $error) {
+            $_GET['ERROR'][$key] = $error;
+        }
+    }
+
     $_SERVER['REQUEST_METHOD'] = 'GET';
     $_SERVER['REQUEST_URI'] = $route;
+    $_GET['LAST_ROUTE'] = $route;
+
+    header('Location: ' . \Core\Helpers\Environment::appUrl() . $route);
     require __DIR__ . '/../../../../../public/index.php';
-    die();
 }
 
-#[NoReturn] function back(): void
+#[NoReturn] function back(array $args = null, array $errors = null): void
 {
-    redirect($_SESSION['LAST_ROUTE']);
+    $old_attributes = [];
+
+    foreach ($_POST as $key => $arg) {
+        if ($arg !== '' && $key !== 'vortex_redirect') {
+            $old_attributes[$key] = $arg;
+        }
+    }
+
+    $_GET['OLD_ATTRIBUTES'] = $old_attributes;
+
+    if (!empty($args)) {
+        foreach ($args as $key => $arg) {
+            $_GET[$key] = $arg;
+        }
+    }
+
+    if (!empty($errors)) {
+        foreach ($errors as $key => $error) {
+            $_GET['ERROR'][$key] = $error;
+        }
+    }
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    $_SERVER['REQUEST_URI'] = $_GET['LAST_ROUTE'] ?? $_REQUEST['LAST_ROUTE'];
+    $_GET['LAST_ROUTE'] = $_GET['LAST_ROUTE'] ?? $_REQUEST['LAST_ROUTE'];
+    require __DIR__ . '/../../../../../public/index.php';
 }
 
 #[NoReturn] function dd(...$vars): void
@@ -40,27 +78,27 @@ function view(string $view_name, array $params = []): void
 
 function old(string $key)
 {
-    return $_SESSION['OLD_ATTRIBUTES'][$key] ?? '';
+    return $_GET['OLD_ATTRIBUTES'][$key] ?? '';
 }
 
 function error(string $key = null)
 {
-    if ($key && key_exists($key, $_SESSION['ERROR'])) {
-        return $_SESSION['ERROR'][$key][0];
+    if ($key && key_exists($key, $_GET['ERROR'])) {
+        return $_GET['ERROR'][$key][0];
     } elseif ($key) {
         return '';
     }
 
-    return $_SESSION['ERROR'] ?? '';
+    return $_GET['ERROR'] ?? '';
 }
 
 function hasError(string $key = null): bool
 {
-    if ($key && !empty($_SESSION['ERROR'])) {
-        if ($_SESSION['ERROR'] != '') {
-            return key_exists($key, $_SESSION['ERROR']);
+    if ($key && !empty($_GET['ERROR'])) {
+        if ($_GET['ERROR'] != '') {
+            return key_exists($key, $_GET['ERROR']);
         }
-    } elseif (!empty($_SESSION['ERROR'])) {
+    } elseif (!empty($_GET['ERROR'])) {
         return true;
     }
 

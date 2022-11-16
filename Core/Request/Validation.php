@@ -22,8 +22,8 @@ class Validation
     {
         $errors = [];
 
-        unset($_SESSION['ERROR']);
-        unset($_SESSION['OLD_ATTRIBUTES']);
+        unset($_GET['ERROR']);
+        unset($_GET['OLD_ATTRIBUTES']);
 
         if (!empty($_FILES)) {
             $args = array_merge($args, $_FILES);
@@ -68,14 +68,18 @@ class Validation
             }
         }
 
+        $_GET['LAST_ROUTE'] = $args['vortex_redirect'];
+
+        unset($args['vortex_redirect']);
+
         if (!empty($errors)) {
-            $_SESSION['ERROR'] = $errors;
-            $_SESSION['OLD_ATTRIBUTES'] = $args;
+            $_GET['ERROR'] = $errors;
+            $_GET['OLD_ATTRIBUTES'] = $args;
             back();
         }
 
-        $_SESSION['ERROR'] = '';
-        $_SESSION['OLD_ATTRIBUTES'] = '';
+        $_GET['ERROR'] = '';
+        $_GET['OLD_ATTRIBUTES'] = '';
         return true;
     }
 

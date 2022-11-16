@@ -9,13 +9,6 @@ use SmartyException;
 
 class Route
 {
-    public function __construct()
-    {
-        if (session_id() === '') {
-            session_start();
-        }
-    }
-
     public function middleware(array|string $middlewareClasses): static
     {
         if (is_array($middlewareClasses)) {
@@ -31,18 +24,14 @@ class Route
         return $this;
     }
 
-    private function setLastGetRoute(string $route): void
-    {
-        $_SESSION['LAST_ROUTE'] = $route;
-    }
-
     /**
      * @throws SmartyException
      */
     public function get(string $route, $path_to_include): void
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            $this->setLastGetRoute($route);
+            $_GET['LAST_ROUTE'] = $route;
+
             $this->route($route, $path_to_include);
         }
     }
@@ -52,8 +41,7 @@ class Route
      */
     public function post(string $route, $path_to_include): void
     {
-        $_SESSION['ERROR'] = '';
-        $_SESSION['OLD_ATTRIBUTES'] = '';
+        $_REQUEST['LAST_ROUTE'] = $_POST['vortex_redirect'];
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->route($route, $path_to_include);
         }
