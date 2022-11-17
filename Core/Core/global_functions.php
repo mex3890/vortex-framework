@@ -1,6 +1,7 @@
 <?php
 
 use Core\Galaxy\Galaxy;
+use Core\Helpers\Environment;
 use JetBrains\PhpStorm\NoReturn;
 
 /**
@@ -19,6 +20,8 @@ function view(string $view_name, array $params = []): void
 
 #[NoReturn] function redirect(string $route, array $args = null, array $errors = null, int $code = 200): void
 {
+    retrievePostArgs();
+
     if (!empty($args)) {
         foreach ($args as $key => $arg) {
             $_GET[$key] = $arg;
@@ -35,21 +38,13 @@ function view(string $view_name, array $params = []): void
     $_SERVER['REQUEST_URI'] = $route;
     $_GET['LAST_ROUTE'] = $route;
 
-    header('Location: ' . \Core\Helpers\Environment::appUrl() . $route);
+    header('Location: ' . Environment::appUrl() . $route);
     require __DIR__ . '/../../../../../public/index.php';
 }
 
 #[NoReturn] function back(array $args = null, array $errors = null): void
 {
-    $old_attributes = [];
-
-    foreach ($_POST as $key => $arg) {
-        if ($arg !== '' && $key !== 'vortex_redirect') {
-            $old_attributes[$key] = $arg;
-        }
-    }
-
-    $_GET['OLD_ATTRIBUTES'] = $old_attributes;
+    retrievePostArgs();
 
     if (!empty($args)) {
         foreach ($args as $key => $arg) {
@@ -66,6 +61,19 @@ function view(string $view_name, array $params = []): void
     $_SERVER['REQUEST_URI'] = $_GET['LAST_ROUTE'] ?? $_REQUEST['LAST_ROUTE'];
     $_GET['LAST_ROUTE'] = $_GET['LAST_ROUTE'] ?? $_REQUEST['LAST_ROUTE'];
     require __DIR__ . '/../../../../../public/index.php';
+}
+
+function retrievePostArgs(): void
+{
+    $old_attributes = [];
+
+    foreach ($_POST as $key => $arg) {
+        if ($arg !== '' && $key !== 'vortex_redirect') {
+            $old_attributes[$key] = $arg;
+        }
+    }
+
+    $_GET['OLD_ATTRIBUTES'] = $old_attributes;
 }
 
 #[NoReturn] function dd(...$vars): void
