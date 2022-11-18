@@ -53,6 +53,7 @@ class MakeMiddleware extends Command
 
             $this->cosmo->fileSuccessRow($class_name, 'created');
         } else {
+            $_SERVER['COMMAND'] = 'php cosmo make:middleware ' . $class_name;
             Log::make('Middleware ' . $class_name . ' already exist', Level::Notice->value);
             $this->cosmo->fileFailRow($class_name, 'already exist');
         }

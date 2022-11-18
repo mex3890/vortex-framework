@@ -53,6 +53,7 @@ class MakeService extends Command
 
             $this->cosmo->fileSuccessRow($class_name, 'created');
         } else {
+            $_SERVER['COMMAND'] = 'php cosmo make:service ' . $class_name;
             Log::make('Service ' . $class_name . ' already exist', Level::Notice->value);
             $this->cosmo->fileFailRow($class_name, 'already exist');
         }
