@@ -6,7 +6,6 @@ use Core\Cosmo\Cosmo;
 use Core\Database\migrations\MigrationsTable;
 use Dotenv\Dotenv;
 use Exception;
-use PDOException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,9 +19,9 @@ class VortexInstall extends Command
 {
     private Cosmo $cosmo;
     private int $steps = 0;
-    private const SUCCESS_STEP_COUNT = 3;
+    private const SUCCESS_STEP_COUNT = 7;
 
-    public function __construct(string|null $file_name = null)
+    public function __construct()
     {
         $this->cosmo = new Cosmo();
         parent::__construct();
@@ -32,10 +31,27 @@ class VortexInstall extends Command
     {
         $this->cosmo->start($output, true);
         $this->cosmo->title('Vortex', 'Install');
+
+        $steps_show = [
+            $this->loadEnvironment(),
+            $this->runFirstsMigrations(),
+            $this->setDefaultTimeZone(),
+            $this->composerInstall(),
+            $this->composerAutoload(),
+            $this->npmInstall(),
+            $this->npmCompile()
+        ];
+
         $this->cosmo->indexRow('step', 'status');
-        $this->loadEnvironment();
-        $this->runFirstsMigrations();
-        $this->setDefaultTimeZone();
+
+        foreach ($steps_show as $step) {
+            if ($step[0] === 1) {
+                $this->cosmo->fileSuccessRow($step[1], 'success');
+            } else {
+                $this->cosmo->fileFailRow($step[1], 'failed');
+            }
+        }
+
         $this->cosmo->finish();
 
         if ($this->steps === self::SUCCESS_STEP_COUNT) {
@@ -52,37 +68,81 @@ class VortexInstall extends Command
         $this->setHelp('Run vortex:install to set the first configurations in your project.');
     }
 
-    private function runFirstsMigrations(): void
+    private function runFirstsMigrations(): array
     {
         try {
             MigrationsTable::up();
-            $this->cosmo->fileSuccessRow('first migrations', 'success');
             $this->steps++;
-        } catch (PDOException $exception) {
-            $this->cosmo->fileFailRow('first migrations', 'failed');
+            return [1, 'first migrations'];
+        } catch (Exception $exception) {
+            return [0, 'first migrations'];
         }
     }
 
-    private function loadEnvironment()
+    private function loadEnvironment(): array
     {
         try {
             $env = Dotenv::createImmutable(__DIR__ . '/../../../../../../');
             $env->load();
-            $this->cosmo->fileSuccessRow('load environment', 'success');
             $this->steps++;
+            return [1, 'load environment'];
         } catch (Exception $exception) {
-            $this->cosmo->fileFailRow('load environment', 'failed');
+            return [0, 'load environment'];
         }
     }
 
-    private function setDefaultTimeZone()
+    private function setDefaultTimeZone(): array
     {
         try {
             date_default_timezone_set($_ENV['TIME_ZONE'] ?? 'America/Sao_Paulo');
-            $this->cosmo->fileSuccessRow('set time zone', 'success');
             $this->steps++;
+            return [1, 'set time zone'];
         } catch (Exception $exception) {
-            $this->cosmo->fileFailRow('set time zone', 'failed');
+            return [0, 'set time zone'];
+        }
+    }
+
+    private function npmInstall(): array
+    {
+        try {
+            shell_exec('npm install');
+            $this->steps++;
+            return [1, 'npm install'];
+        } catch (Exception $exception) {
+            return [0, 'npm install'];
+        }
+    }
+
+    private function npmCompile(): array
+    {
+        try {
+            shell_exec('npm run vortex');
+            $this->steps++;
+            return [1, 'npm compile'];
+        } catch (Exception $exception) {
+            return [0, 'npm compile'];
+        }
+    }
+
+    private function composerInstall(): array
+    {
+        try {
+            shell_exec('composer install');
+            $this->steps++;
+            return [1, 'composer install'];
+        } catch (Exception $exception) {
+            return [0, 'composer install'];
+        }
+    }
+
+    private function composerAutoload(): array
+    {
+        try {
+            shell_exec('composer dump-autoload');
+            $this->steps++;
+            return [1, 'dump-autoload'];
+        } catch (Exception $exception) {
+            return [0, 'dump-autoload'];
         }
     }
 }
