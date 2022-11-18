@@ -53,7 +53,7 @@ class MakeSeed extends Command
 
             $this->cosmo->fileSuccessRow($class_name, 'created');
         } else {
-            Log::make('Seed' . $class_name . ' already exist', Level::Notice->value);
+            Log::make('Seed ' . $class_name . ' already exist', Level::Notice->value);
             $this->cosmo->fileFailRow($class_name, 'already exist');
         }
 
