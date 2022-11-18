@@ -2,11 +2,13 @@
 
 namespace Core\Cosmo\Commands;
 
+use Core\Core\Log\Log;
 use Core\Cosmo\Cosmo;
 use Core\Database\Schema;
 use Core\Helpers\ClassManager;
 use Core\Helpers\CommandMounter;
 use Core\Helpers\FileDirManager;
+use Monolog\Level;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -86,11 +88,13 @@ class MigrateRollback extends Command
                     Schema::delete('migrations', 'migration', $this->file_name);
                     $this->cosmo->fileSuccessRow($this->file_name, 'rollback');
                 } else {
+                    Log::make('Migration ' . $this->file_name . ' not rain', Level::Notice->value);
                     $this->cosmo->fileSuccessRow($this->file_name, 'not rain');
                 }
                 $this->cosmo->finish();
                 $this->cosmo->commandSuccess('rollback');
             } else {
+                Log::make('Migration ' . $this->file_name . ' not found', Level::Notice->value);
                 $this->cosmo->finish();
                 $this->cosmo->commandFail('not found');
             }

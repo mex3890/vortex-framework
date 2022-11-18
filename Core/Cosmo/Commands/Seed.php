@@ -2,9 +2,11 @@
 
 namespace Core\Cosmo\Commands;
 
+use Core\Core\Log\Log;
 use Core\Cosmo\Cosmo;
 use Core\Helpers\ClassManager;
 use Core\Helpers\FileDirManager;
+use Monolog\Level;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -53,6 +55,7 @@ class Seed extends Command
 
                     $this->cosmo->fileSuccessRow($file_name, 'run');
                 } else {
+                    Log::make('Seed ' . $file_name . ' not found', Level::Notice->value);
                     $this->cosmo->fileFailRow($file_name, 'not found');
                 }
             }

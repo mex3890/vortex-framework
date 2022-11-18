@@ -2,6 +2,7 @@
 
 namespace Core\Database;
 
+use Core\Abstractions\Enums\PhpExtra;
 use Core\Abstractions\Enums\SqlExpressions;
 use PDO;
 
@@ -15,29 +16,29 @@ class QueryExecutor
     public function __construct(string $primary_command, string $table_name, array $table = null, string $query = null)
     {
         switch ($primary_command) {
-            case 'CREATE':
+            case SqlExpressions::CREATE->value:
                 $this->table_name = $table_name;
                 $this->table = $table;
                 $this->mountCreateColumns();
                 break;
-            case 'INSERT INTO':
+            case SqlExpressions::INSERT->value:
                 $this->table_name = $table_name;
                 $this->executeQuery(SqlExpressions::INSERT->value, $query);
                 break;
-            case 'SELECT':
+            case SqlExpressions::SELECT->value:
                 $this->table_name = $table_name;
                 $this->executeQuery(SqlExpressions::SELECT->value, $query);
                 break;
-            case 'DELETE FROM':
+            case SqlExpressions::DELETE_FROM->value:
                 $this->table_name = $table_name;
                 $this->executeQuery(SqlExpressions::DELETE_FROM->value, $query);
                 break;
-            case 'DROP TABLE':
+            case SqlExpressions::DROP_TABLE->value:
                 $this->table_name = $table_name;
                 $query = SqlExpressions::DROP_TABLE->value . " $table_name;";
                 $this->executeQuery(SqlExpressions::DROP_TABLE->value, $query);
                 break;
-            case 'UPDATE':
+            case SqlExpressions::UPDATE->value:
                 $this->table_name = $table_name;
                 $this->executeQuery(SqlExpressions::UPDATE->value, $query);
                 break;
@@ -47,7 +48,12 @@ class QueryExecutor
     private function mountCreateColumns(): void
     {
         $count = 1;
-        $header_create = "CREATE TABLE $this->table_name (";
+
+        $header_create = SqlExpressions::CREATE_TABLE->value .
+            PhpExtra::PHP_WHITE_SPACE->value .
+            $this->table_name .
+            PhpExtra::PHP_WHITE_SPACE->value .
+            '(';
 
         $columns_length = count($this->table);
 
@@ -80,8 +86,9 @@ class QueryExecutor
     private function executeQuery(string $primary_command, string $query): void
     {
         $connection = new Connection();
+
         switch ($primary_command) {
-            case 'SELECT':
+            case SqlExpressions::SELECT->value:
                 $result = $connection->connection->prepare($query);
                 $result->execute();
                 $this->result = $result->fetchAll(PDO::FETCH_ASSOC);

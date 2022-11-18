@@ -2,6 +2,7 @@
 
 namespace Core\Database;
 
+use Core\Exceptions\MissingEnvironmentDatabaseConnectionConstants;
 use PDO;
 
 class Connection
@@ -13,14 +14,24 @@ class Connection
     private string $db_username = '';
     private string $db_password = '';
     public PDO $connection;
+
+    /**
+     * @throws MissingEnvironmentDatabaseConnectionConstants
+     */
     public function __construct()
     {
-        $this->db_connection = $_ENV['DB_CONNECTION'];
-        $this->db_host = $_ENV['DB_HOST'];
-        $this->db_database = $_ENV['DB_DATABASE'];
-        $this->db_charset = $_ENV['DB_CHARSET'];
-        $this->db_username = $_ENV['DB_USERNAME'];
-        $this->db_password = $_ENV['DB_PASSWORD'];
+        $count = 0;
+
+        $this->db_connection = $_ENV['DB_CONNECTION'] ?? $count++;
+        $this->db_host = $_ENV['DB_HOST'] ?? $count++;
+        $this->db_database = $_ENV['DB_DATABASE'] ?? $count++;
+        $this->db_charset = $_ENV['DB_CHARSET'] ?? $count++;
+        $this->db_username = $_ENV['DB_USERNAME'] ?? $count++;
+        $this->db_password = $_ENV['DB_PASSWORD'] ?? $count++;
+
+        if ($count !== 0) {
+            throw new MissingEnvironmentDatabaseConnectionConstants();
+        }
 
         $this->makeConnection();
     }

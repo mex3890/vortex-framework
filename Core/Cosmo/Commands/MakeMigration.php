@@ -2,10 +2,12 @@
 
 namespace Core\Cosmo\Commands;
 
+use Core\Core\Log\Log;
 use Core\Cosmo\Cosmo;
 use Core\Helpers\DateTime;
 use Core\Helpers\FileDirManager;
 use Core\Helpers\StringFormatter;
+use Monolog\Level;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -53,6 +55,7 @@ class MakeMigration extends Command
 
             $this->cosmo->fileSuccessRow($migration_name, 'created');
         } else {
+            Log::make('Migration ' . $class_name . ' already exist', Level::Notice->value);
             $this->cosmo->fileFailRow($migration_name, 'already exist');
         }
 

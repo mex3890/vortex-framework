@@ -2,6 +2,7 @@
 
 namespace Core\Database\Query;
 
+use Core\Abstractions\Enums\PhpExtra;
 use Core\Abstractions\Enums\SqlExpressions;
 use Core\Database\QueryExecutor;
 
@@ -31,7 +32,7 @@ class Select extends SqlCommand
                 $i++;
             }
         } else {
-            $query .= ' *';
+            $query .= PhpExtra::PHP_WHITE_SPACE->value . $select_columns;
         }
 
         $query .= " from $table;";

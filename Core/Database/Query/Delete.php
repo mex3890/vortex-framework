@@ -2,6 +2,7 @@
 
 namespace Core\Database\Query;
 
+use Core\Abstractions\Enums\PhpExtra;
 use Core\Abstractions\Enums\SqlExpressions;
 use Core\Database\QueryExecutor;
 
@@ -18,7 +19,16 @@ class Delete
 
     private function mountDeleteQuery(string $table, string $column, string $value, string $operator): string
     {
-        return SqlExpressions::DELETE_FROM->value . " $table WHERE $column $operator '$value';";
+        return SqlExpressions::DELETE_FROM->value .
+            PhpExtra::PHP_WHITE_SPACE->value .
+            $table .
+            PhpExtra::PHP_WHITE_SPACE->value .
+            SqlExpressions::WHERE->value .
+            $column .
+            PhpExtra::PHP_WHITE_SPACE->value .
+            $operator .
+            PhpExtra::PHP_WHITE_SPACE->value .
+            "'$value';";
     }
 
     public function make(): bool|array
