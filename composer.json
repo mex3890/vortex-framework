@@ -19,6 +19,7 @@
         "vlucas/phpdotenv": "^5.4",
         "symfony/console": "^6.1",
         "phpmailer/phpmailer": "^6.6",
-        "smarty/smarty": "^4.2"
+        "smarty/smarty": "^4.2",
+        "monolog/monolog": "^3.2"
     }
 }

@@ -32,7 +32,6 @@ class VortexServer extends Command
         $this->cosmo->title('Vortex', 'Server');
 
         try {
-            shell_exec('composer dump-autoload');
             shell_exec('php -S localhost:8000 -t ' . __DIR__ . '/../../../../../../public/');
             $this->cosmo->commandSuccess('server');
         } catch (Exception $exception) {
