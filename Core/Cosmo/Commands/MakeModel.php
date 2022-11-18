@@ -2,10 +2,12 @@
 
 namespace Core\Cosmo\Commands;
 
+use Core\Core\Log\Log;
 use Core\Cosmo\Cosmo;
 use Core\Helpers\ClassManager;
 use Core\Helpers\FileDirManager;
 use Core\Helpers\StringFormatter;
+use Monolog\Level;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -58,6 +60,7 @@ class MakeModel extends Command
 
             $this->cosmo->fileSuccessRow($class_name, 'created');
         } else {
+            Log::make('Model' . $class_name . ' already exist', Level::Notice->value);
             $this->cosmo->fileFailRow($class_name, 'already exist');
         }
 

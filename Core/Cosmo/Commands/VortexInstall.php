@@ -2,10 +2,12 @@
 
 namespace Core\Cosmo\Commands;
 
+use Core\Core\Log\Log;
 use Core\Cosmo\Cosmo;
 use Core\Database\migrations\MigrationsTable;
 use Dotenv\Dotenv;
 use Exception;
+use Monolog\Level;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,7 +21,7 @@ class VortexInstall extends Command
 {
     private Cosmo $cosmo;
     private int $steps = 0;
-    private const SUCCESS_STEP_COUNT = 7;
+    private const SUCCESS_STEP_COUNT = 6;
 
     public function __construct()
     {
@@ -37,7 +39,6 @@ class VortexInstall extends Command
             $this->runFirstsMigrations(),
             $this->setDefaultTimeZone(),
             $this->composerInstall(),
-            $this->composerAutoload(),
             $this->npmInstall(),
             $this->npmCompile()
         ];
@@ -75,6 +76,7 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'first migrations'];
         } catch (Exception $exception) {
+            Log::make('Fail on Run First Migrations', Level::Notice->value);
             return [0, 'first migrations'];
         }
     }
@@ -87,6 +89,7 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'load environment'];
         } catch (Exception $exception) {
+            Log::make('Fail on load Environment Variables', Level::Notice->value);
             return [0, 'load environment'];
         }
     }
@@ -98,6 +101,7 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'set time zone'];
         } catch (Exception $exception) {
+            Log::make('Fail on Set Default Time Zone', Level::Notice->value);
             return [0, 'set time zone'];
         }
     }
@@ -109,6 +113,7 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'npm install'];
         } catch (Exception $exception) {
+            Log::make('Fail on install npm dependencies [command => npm install]', Level::Notice->value);
             return [0, 'npm install'];
         }
     }
@@ -120,6 +125,7 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'npm compile'];
         } catch (Exception $exception) {
+            Log::make('Fail on compile assets, [command => npm run vortex]', Level::Notice->value);
             return [0, 'npm compile'];
         }
     }
@@ -131,18 +137,8 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'composer install'];
         } catch (Exception $exception) {
+            Log::make('Fail on install Composer dependencies, [command => composer install]', Level::Notice->value);
             return [0, 'composer install'];
-        }
-    }
-
-    private function composerAutoload(): array
-    {
-        try {
-            shell_exec('composer dump-autoload');
-            $this->steps++;
-            return [1, 'dump-autoload'];
-        } catch (Exception $exception) {
-            return [0, 'dump-autoload'];
         }
     }
 }
