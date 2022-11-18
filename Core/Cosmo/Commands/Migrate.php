@@ -70,6 +70,7 @@ class Migrate extends Command
 
                 $this->cosmo->fileSuccessRow($this->file_name, 'run');
             } else {
+                $_SERVER['COMMAND'] = 'php cosmo migrate ' . $this->file_name;
                 Log::make('Migration ' . $this->file_name . ' already ran', Level::Notice->value);
                 $this->cosmo->fileFailRow($this->file_name, 'already ran');
             }

@@ -53,6 +53,7 @@ class MakeController extends Command
 
             $this->cosmo->fileSuccessRow($class_name, 'created');
         } else {
+            $_SERVER['COMMAND'] = 'php cosmo make:controller ' . $class_name;
             Log::make('Controller ' . $class_name . ' already exist', Level::Notice->value);
             $this->cosmo->fileFailRow($class_name, 'already exist');
         }

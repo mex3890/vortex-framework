@@ -55,6 +55,7 @@ class Seed extends Command
 
                     $this->cosmo->fileSuccessRow($file_name, 'run');
                 } else {
+                    $_SERVER['COMMAND'] = 'php cosmo seed ' . $this->file_names;
                     Log::make('Seed ' . $file_name . ' not found', Level::Notice->value);
                     $this->cosmo->fileFailRow($file_name, 'not found');
                 }

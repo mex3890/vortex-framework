@@ -60,6 +60,7 @@ class MakeModel extends Command
 
             $this->cosmo->fileSuccessRow($class_name, 'created');
         } else {
+            $_SERVER['COMMAND'] = 'php cosmo make:model ' . $class_name;
             Log::make('Model ' . $class_name . ' already exist', Level::Notice->value);
             $this->cosmo->fileFailRow($class_name, 'already exist');
         }
