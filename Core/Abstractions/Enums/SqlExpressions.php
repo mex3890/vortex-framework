@@ -5,6 +5,7 @@ namespace Core\Abstractions\Enums;
 enum SqlExpressions: string
 {
     case CREATE = 'CREATE';
+    case CREATE_TABLE = 'CREATE TABLE';
     case DELETE_FROM = 'DELETE FROM';
     case UPDATE = 'UPDATE';
     case SELECT = 'SELECT';
@@ -13,4 +14,5 @@ enum SqlExpressions: string
     case LIMIT = 'LIMIT';
     case ORDER_BY = 'ORDER BY';
     case WHERE = 'WHERE';
+    case REFERENCES = 'REFERENCES';
 }

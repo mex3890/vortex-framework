@@ -14,6 +14,7 @@ class Environment
     private const DB_USERNAME = 'DB_USERNAME';
     private const DB_PASSWORD = 'DB_PASSWORD';
     private const DB_CHARSET = 'DB_CHARSET';
+    private const APP_LOCALHOST_SERVER_PORT = 'APP_LOCALHOST_SERVER_PORT';
     private const TIME_ZONE = 'TIME_ZONE';
     private const DATE_FORMAT = 'DATE_FORMAT';
     private const TIME_FORMAT = 'TIME_FORMAT';
@@ -36,6 +37,11 @@ class Environment
     public static function appUrl()
     {
         return $_ENV[self::APP_URL] ?? null;
+    }
+
+    public static function appLocalhostServerPort()
+    {
+        return $_ENV[self::APP_LOCALHOST_SERVER_PORT] ?? null;
     }
 
     public static function dbConnection()

@@ -2,10 +2,12 @@
 
 namespace Core\Cosmo\Commands;
 
+use Core\Core\Log\Log;
 use Core\Cosmo\Cosmo;
 use Core\Database\Schema;
 use Core\Helpers\ClassManager;
 use Core\Helpers\FileDirManager;
+use Monolog\Level;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -68,6 +70,7 @@ class Migrate extends Command
 
                 $this->cosmo->fileSuccessRow($this->file_name, 'run');
             } else {
+                Log::make('Migration ' . $this->file_name . ' already ran', Level::Notice->value);
                 $this->cosmo->fileFailRow($this->file_name, 'already ran');
             }
         } else {

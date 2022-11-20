@@ -36,7 +36,6 @@ class LogHandler extends StreamHandler
             . ($_SERVER['REMOTE_PORT'] ? "Remote Port: " . $_SERVER['REMOTE_PORT'] . PHP_EOL : '')
             . PHP_EOL
             . "%message%"
-            . "%extra%"
             . PHP_EOL
             . PHP_EOL
             . self::LOG_END
