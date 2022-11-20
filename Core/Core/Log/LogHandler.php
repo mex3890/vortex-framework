@@ -34,6 +34,7 @@ class LogHandler extends StreamHandler
             . (isset($_SERVER['APP_URL']) ? "Server: " . $_SERVER['APP_URL'] . PHP_EOL : '')
             . (isset($_SERVER['REMOTE_ADDR']) ? "Remote Address: " . $_SERVER['REMOTE_ADDR'] . PHP_EOL : '')
             . (isset($_SERVER['REMOTE_PORT']) ? "Remote Port: " . $_SERVER['REMOTE_PORT'] . PHP_EOL : '')
+            . (isset($_SERVER['COMMAND']) ? "Command: " . $_SERVER['COMMAND'] . PHP_EOL : '')
             . PHP_EOL
             . "%message%"
             . PHP_EOL

@@ -76,6 +76,7 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'first migrations'];
         } catch (Exception $exception) {
+            $_SERVER['COMMAND'] = 'php cosmo vortex:install';
             Log::make('Fail on Run First Migrations', Level::Notice->value);
             return [0, 'first migrations'];
         }
@@ -89,6 +90,7 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'load environment'];
         } catch (Exception $exception) {
+            $_SERVER['COMMAND'] = 'php cosmo vortex:install';
             Log::make('Fail on load Environment Variables', Level::Notice->value);
             return [0, 'load environment'];
         }
@@ -101,6 +103,7 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'set time zone'];
         } catch (Exception $exception) {
+            $_SERVER['COMMAND'] = 'php cosmo vortex:install';
             Log::make('Fail on Set Default Time Zone', Level::Notice->value);
             return [0, 'set time zone'];
         }
@@ -113,6 +116,7 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'npm install'];
         } catch (Exception $exception) {
+            $_SERVER['COMMAND'] = 'php cosmo vortex:install';
             Log::make('Fail on install npm dependencies [command => npm install]', Level::Notice->value);
             return [0, 'npm install'];
         }
@@ -125,6 +129,7 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'npm compile'];
         } catch (Exception $exception) {
+            $_SERVER['COMMAND'] = 'php cosmo vortex:install';
             Log::make('Fail on compile assets, [command => npm run vortex]', Level::Notice->value);
             return [0, 'npm compile'];
         }
@@ -137,6 +142,7 @@ class VortexInstall extends Command
             $this->steps++;
             return [1, 'composer install'];
         } catch (Exception $exception) {
+            $_SERVER['COMMAND'] = 'php cosmo vortex:install';
             Log::make('Fail on install Composer dependencies, [command => composer install]', Level::Notice->value);
             return [0, 'composer install'];
         }

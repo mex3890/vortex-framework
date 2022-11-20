@@ -38,6 +38,7 @@ class VortexServer extends Command
             shell_exec('php -S localhost:' . $server_port . ' -t ' . __DIR__ . '/../../../../../../public/');
             $this->cosmo->commandSuccess('server');
         } catch (Exception $exception) {
+            $_SERVER['COMMAND'] = 'php cosmo vortex:server';
             Log::make('Failed to up php server on localhost:' . $server_port, Level::Notice->value);
             $this->cosmo->commandFail('server');
         }

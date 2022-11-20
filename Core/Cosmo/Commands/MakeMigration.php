@@ -55,6 +55,7 @@ class MakeMigration extends Command
 
             $this->cosmo->fileSuccessRow($migration_name, 'created');
         } else {
+            $_SERVER['COMMAND'] = 'php cosmo make:migration ' . $class_name;
             Log::make('Migration ' . $class_name . ' already exist', Level::Notice->value);
             $this->cosmo->fileFailRow($migration_name, 'already exist');
         }
