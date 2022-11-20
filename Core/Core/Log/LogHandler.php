@@ -24,16 +24,16 @@ class LogHandler extends StreamHandler
         $output = self::LOG_TITLE
             . PHP_EOL
             . PHP_EOL
-            . ($_SERVER['REQUEST_METHOD'] ? "Method: " . $_SERVER['REQUEST_METHOD'] . PHP_EOL : '')
-            . ($_SERVER['REQUEST_TIME'] ? "Request time: " . $_SERVER['REQUEST_TIME_FLOAT'] . ' ms' . PHP_EOL : '')
+            . (isset($_SERVER['REQUEST_METHOD']) ? "Method: " . $_SERVER['REQUEST_METHOD'] . PHP_EOL : '')
+            . (isset($_SERVER['REQUEST_TIME']) ? "Request time: " . $_SERVER['REQUEST_TIME_FLOAT'] . ' ms' . PHP_EOL : '')
             . "Date-time: %datetime%"
             . PHP_EOL
             . "Level: %level_name%"
             . PHP_EOL
-            . ($_SERVER['REQUEST_URI'] ? "Context: " . $_SERVER['REQUEST_URI'] . PHP_EOL : '')
-            . ($_SERVER['APP_URL'] ? "Server: " . $_SERVER['APP_URL'] . PHP_EOL : '')
-            . ($_SERVER['REMOTE_ADDR'] ? "Remote Address: " . $_SERVER['REMOTE_ADDR'] . PHP_EOL : '')
-            . ($_SERVER['REMOTE_PORT'] ? "Remote Port: " . $_SERVER['REMOTE_PORT'] . PHP_EOL : '')
+            . (isset($_SERVER['REQUEST_URI']) ? "Context: " . $_SERVER['REQUEST_URI'] . PHP_EOL : '')
+            . (isset($_SERVER['APP_URL']) ? "Server: " . $_SERVER['APP_URL'] . PHP_EOL : '')
+            . (isset($_SERVER['REMOTE_ADDR']) ? "Remote Address: " . $_SERVER['REMOTE_ADDR'] . PHP_EOL : '')
+            . (isset($_SERVER['REMOTE_PORT']) ? "Remote Port: " . $_SERVER['REMOTE_PORT'] . PHP_EOL : '')
             . PHP_EOL
             . "%message%"
             . PHP_EOL
