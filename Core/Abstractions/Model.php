@@ -3,6 +3,7 @@
 namespace Core\Abstractions;
 
 use Core\Database\Schema;
+use Core\Exceptions\FailedOnCreateObjectByModel;
 
 abstract class Model
 {
@@ -19,9 +20,20 @@ abstract class Model
         $this->args = $args;
     }
 
-    public function create(): array|bool
+    /**
+     * @return $this
+     * @throws FailedOnCreateObjectByModel
+     */
+    public function create(): static
     {
-        return Schema::insert($this->table, $this->args);
+        try {
+            Schema::insert($this->table, $this->args);
+
+            return self::createObjectByArray($this->args);
+
+        } catch (FailedOnCreateObjectByModel) {
+            throw new FailedOnCreateObjectByModel(self::class);
+        }
     }
 
     public function delete(string $column, string $value, string $operator = '='): bool|array
@@ -71,30 +83,27 @@ abstract class Model
 
         if (count($models) > 1) {
             foreach ($models as $model) {
-                $object = new static($model);
-
-                foreach ($object->args as $key => $arg) {
-                    $object->$key = $arg;
-                }
-
-                unset($object->args);
-                unset($object->query);
-                unset($object->table);
-                $result[] = $object;
+                $result[] = self::createObjectByArray($model);
             }
         } else {
-            $object = new static($models[0]);
-
-            foreach ($object->args as $key => $arg) {
-                $object->$key = $arg;
-            }
-
-            unset($object->args);
-            unset($object->query);
-            unset($object->table);
-            $result = $object;
+            $result = self::createObjectByArray($models[0]);
         }
 
         return $result;
+    }
+
+    private static function createObjectByArray(array $args): static
+    {
+        $object = new static($args);
+
+        foreach ($object->args as $key => $arg) {
+            $object->$key = $arg;
+        }
+
+        unset($object->args);
+        unset($object->query);
+        unset($object->table);
+
+        return $object;
     }
 }
