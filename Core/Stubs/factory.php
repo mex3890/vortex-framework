@@ -2,7 +2,9 @@
 
 namespace App\Factories;
 
-class MountFactory extends \Core\Abstractions\Factory
+use Core\Abstractions\Factory;
+
+class MountFactory extends Factory
 {
 
     public static function frame(): array
