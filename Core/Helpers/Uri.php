@@ -33,6 +33,6 @@ class Uri
 
     public static function getViewPath(string $additional_path = ''): string
     {
-        return realpath(self::getRootPath() . "/../Resources/views/$additional_path");
+        return realpath("../Resources/views/$additional_path");
     }
 }

@@ -59,6 +59,15 @@ class Mailer
         return $this;
     }
 
+    public function withEmbeddedImage(array $image_name_path)
+    {
+        foreach ($image_name_path as $name => $path) {
+            $this->mail->addEmbeddedImage($path, $name);
+        }
+
+        return $this;
+    }
+
     public function mount(string $subject, string $body, bool $is_Html = false, bool $use_template_file = false): Mailer
     {
         $this->mail->Subject = $subject;
