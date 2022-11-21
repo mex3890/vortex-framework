@@ -1,6 +1,7 @@
 <?php
 
 use Core\Galaxy\Galaxy;
+use Faker\Factory;
 use JetBrains\PhpStorm\NoReturn;
 
 /**
@@ -118,4 +119,9 @@ function hasError(string $key = null): bool
 function content(string $path): string
 {
     return $_ENV['APP_URL'] . "/$path";
+}
+
+function faker(): \Faker\Generator
+{
+    return Factory::create();
 }
