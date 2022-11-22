@@ -24,6 +24,7 @@ class Delete
             $table .
             PhpExtra::PHP_WHITE_SPACE->value .
             SqlExpressions::WHERE->value .
+            PhpExtra::PHP_WHITE_SPACE->value .
             $column .
             PhpExtra::PHP_WHITE_SPACE->value .
             $operator .

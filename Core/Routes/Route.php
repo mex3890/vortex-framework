@@ -41,7 +41,7 @@ class Route
      */
     public function post(string $route, $path_to_include): void
     {
-        $_REQUEST['LAST_ROUTE'] = $_POST['vortex_redirect'];
+        $_REQUEST['LAST_ROUTE'] = $_POST['vortex_redirect'] ?? '/';
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->route($route, $path_to_include);
         }

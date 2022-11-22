@@ -2,20 +2,27 @@
 
 namespace Core\Abstractions;
 
+use Core\Database\Query\Select;
 use Core\Database\Schema;
 use Core\Exceptions\FailedOnCreateObjectByModel;
+use Core\Exceptions\FailedOnGetObjectsByModel;
+use Core\Exceptions\FailedOnUpdateObjectByModel;
+use Core\Exceptions\MissingArguments;
+use Core\Request\Paginator;
 
 abstract class Model
 {
     protected string $table = '';
 
-    public string $id;
-
     protected array $args;
 
-    protected string $query;
+    protected Select|array $query;
 
-    public function __construct(array $args)
+    protected array $result;
+
+    protected string $pagination_links;
+
+    public function __construct(array $args = [])
     {
         $this->args = $args;
     }
@@ -23,73 +30,104 @@ abstract class Model
     /**
      * @return $this
      * @throws FailedOnCreateObjectByModel
+     * @throws MissingArguments
      */
     public function create(): static
     {
-        try {
-            Schema::insert($this->table, $this->args);
+        if (isset($this->args)) {
+            $model = Schema::insert($this->table, $this->args);
+
+            if (!$model) {
+                throw new FailedOnCreateObjectByModel(self::class);
+            }
 
             return self::createObjectByArray($this->args);
+        }
 
-        } catch (FailedOnCreateObjectByModel) {
+        throw new MissingArguments('create');
+    }
+
+    /**
+     * @param string $column
+     * @param string $value
+     * @param string $operator
+     * @return bool
+     * @throws FailedOnCreateObjectByModel
+     */
+    public static function delete(string $column, string $value, string $operator = '='): bool
+    {
+        $model = new static();
+
+        $status = Schema::delete($model->table, $column, $value, $operator);
+
+        if (!$status) {
             throw new FailedOnCreateObjectByModel(self::class);
         }
-    }
 
-    public function delete(string $column, string $value, string $operator = '='): bool|array
-    {
-        return Schema::delete($this->table, $column, $value, $operator);
-    }
-
-    public function update(array $new_values): bool|array
-    {
-        return Schema::update($this->table, $new_values, $this->args['id']);
+        return true;
     }
 
     /**
-     * @param string $column If you set $column parameter, this will be used to order according to the same
-     * @return array|bool
+     * @throws FailedOnUpdateObjectByModel
      */
-    public function first(string $column = 'id'): bool|array
+    public function update(array $new_values): static
     {
-        $model = new static([]);
-        return Schema::first($model->table, $column);
+        $status = Schema::update($this->table, $new_values, $this->args['id']);
+
+        if (!$status) {
+            throw new FailedOnUpdateObjectByModel(self::class);
+        }
+
+        return self::createObjectByArray($this->args);
     }
 
     /**
-     * @param string $column If you set $column parameter, this will be used to order according to the same
-     * @return array|bool
+     * @param string $column
+     * @return bool|array
+     * @throws FailedOnGetObjectsByModel
      */
-    public static function last(string $column = 'id'): bool|array
+    public static function first(string $column = 'id'): bool|Model
     {
         $model = new static([]);
-        return Schema::last($model->table, $column);
+
+        $model = Schema::first($model->table, $column);
+
+        if (!$model) {
+            throw new FailedOnGetObjectsByModel(self::class);
+        }
+
+        return self::createObjectByArray($model);
     }
 
-    public static function get(array|string $select_columns = '*', string $search_column = null, string|int $value = null, string $operator = '='): array|Model
+    /**
+     * @param string $column
+     * @return bool|array
+     * @throws FailedOnGetObjectsByModel
+     */
+    public static function last(string $column = 'id'): bool|Model
     {
-        $models = new static([]);
+        $model = new static([]);
+
+        $model = Schema::last($model->table, $column);
+
+        if (!$model) {
+            throw new FailedOnGetObjectsByModel(self::class);
+        }
+
+        return self::createObjectByArray($model);
+    }
+
+    public static function find(array|string $select_columns = '*', string $search_column = null, string|int $value = null, string $operator = '='): static
+    {
+        $newModel = new static();
+
         if (is_null($search_column) && is_null($value)) {
-            $models = Schema::select($models->table, $select_columns)->make();
+            $newModel->query = Schema::select($newModel->table, $select_columns);
         } else {
-            $models = Schema::select($models->table, $select_columns)->where($search_column, $value, $operator)->make();
+            $newModel->query = Schema::select($newModel->table, $select_columns)->where($search_column, $value, $operator);
         }
 
-        $result = [];
-
-        if (empty($models)) {
-            return [];
-        }
-
-        if (count($models) > 1) {
-            foreach ($models as $model) {
-                $result[] = self::createObjectByArray($model);
-            }
-        } else {
-            $result = self::createObjectByArray($models[0]);
-        }
-
-        return $result;
+        return $newModel;
     }
 
     private static function createObjectByArray(array $args): static
@@ -103,7 +141,56 @@ abstract class Model
         unset($object->args);
         unset($object->query);
         unset($object->table);
+        unset($object->pagination_links);
+        unset($object->result);
 
         return $object;
+    }
+
+    public function pagination(int $model_per_page, bool $with_previous_button = true, bool $with_next_button = true): static
+    {
+        if (!empty($this->result = $this->query->make())) {
+            if (isset($this->query) && $this->query instanceof Select) {
+                $paginator = new Paginator(count($this->result), $model_per_page);
+                $this->pagination_links = $paginator->mountLinks();
+                $page_limits = $paginator->getOffsetAndLimit();
+                $this->query = $this->query->limit($page_limits['min'], $page_limits['max']);
+            }
+        } else {
+            $this->query = [];
+        }
+
+        return $this;
+    }
+
+    public function get(): array|static
+    {
+        if (!empty($this->query)) {
+            $models = $this->query->make();
+
+            if (!isset($this->pagination_links)) {
+                if (count($models) > 1) {
+                    $result = [];
+
+                    foreach ($models as $model) {
+                        $result[] = self::createObjectByArray($model);
+                    }
+                } else {
+                    $result = self::createObjectByArray($models[0]);
+                }
+            } else {
+                $result = [];
+
+                foreach ($models as $model) {
+                    $result[] = self::createObjectByArray($model);
+                }
+
+                $_GET['PAGINATION_LINKS'] = $this->pagination_links;
+            }
+
+            return $result;
+        }
+
+        return [];
     }
 }
