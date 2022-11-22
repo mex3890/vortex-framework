@@ -87,7 +87,6 @@ class Paginator
                 unset($query_strings['page']);
                 $request_url = $this->request_url . "?" . http_build_query($query_strings);
                 $this->pagination_links .= $this->createHtmlLink($next_page, $request_url, self::NEXT_BUTTON_LABEL);
-
             }
         }
     }
