@@ -3,6 +3,7 @@
 namespace Core\Database\Query;
 
 
+use Core\Abstractions\Enums\PhpExtra;
 use Core\Abstractions\Enums\SqlExpressions;
 
 class SqlCommand
@@ -34,9 +35,9 @@ class SqlCommand
         return $this;
     }
 
-    public function limit(string|int $value): static
+    public function limit(int $count, int $initial_limit = null): static
     {
-        $this->filters['limit'] = SqlExpressions::LIMIT->value . " $value";
+        $this->filters['limit'] = SqlExpressions::LIMIT->value . PhpExtra::PHP_WHITE_SPACE->value . ($initial_limit ? "$count, $initial_limit" : $count);
 
         return $this;
     }
