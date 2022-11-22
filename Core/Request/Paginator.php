@@ -4,18 +4,22 @@ namespace Core\Request;
 
 class Paginator
 {
+    private string $request_url;
     private int $count_per_page;
     private int $current_page;
     private int $last_page;
     private string $pagination_links;
+    private int $row_found;
     private const PREVIOUS_BUTTON_LABEL = 'Previous';
     private const NEXT_BUTTON_LABEL = 'Next';
 
     public function __construct(int $rows_found, int $count_per_page)
     {
         $this->count_per_page = $count_per_page;
+        $this->row_found = $rows_found;
         $this->last_page = ceil($rows_found / $count_per_page);
         $this->current_page = $_GET['page'] ?? 1;
+        $this->request_url = $this->getRequestPath();
     }
 
     private function getRequestPath()
@@ -34,10 +38,11 @@ class Paginator
 
             $query_strings = $this->getQueryStrings();
             unset($query_strings['page']);
-            $request_url = $this->getRequestPath() . "?" . http_build_query($query_strings);
+            $request_url = $this->request_url . "?" . http_build_query($query_strings);
 
             $this->pagination_links .= $this->createHtmlLink($page, $request_url, $page, $is_link_active);
         }
+
     }
 
     private function createHtmlLink($page_number, $request_url, $page_value, $is_link_active = ''): string
@@ -68,7 +73,7 @@ class Paginator
             $previous_page = $this->current_page - 1;
             $query_strings = $this->getQueryStrings();
             unset($query_strings['page']);
-            $request_url = $this->getRequestPath() . "?" . http_build_query($query_strings);
+            $request_url = $this->request_url . "?" . http_build_query($query_strings);
             $this->pagination_links .= $this->createHtmlLink($previous_page, $request_url, self::PREVIOUS_BUTTON_LABEL);
         }
     }
@@ -80,7 +85,7 @@ class Paginator
                 $next_page = $this->current_page + 1;
                 $query_strings = $this->getQueryStrings();
                 unset($query_strings['page']);
-                $request_url = $this->getRequestPath() . "?" . http_build_query($query_strings);
+                $request_url = $this->request_url . "?" . http_build_query($query_strings);
                 $this->pagination_links .= $this->createHtmlLink($next_page, $request_url, self::NEXT_BUTTON_LABEL);
 
             }
