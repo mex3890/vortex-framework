@@ -13,13 +13,9 @@ use Core\Request\Paginator;
 abstract class Model
 {
     protected string $table = '';
-
     protected array $args;
-
     protected Select|array $query;
-
     protected array $result;
-
     protected string $pagination_links;
 
     public function __construct(array $args = [])
@@ -147,11 +143,30 @@ abstract class Model
         return $object;
     }
 
-    public function pagination(int $model_per_page, bool $with_previous_button = true, bool $with_next_button = true): static
+    /**
+     * @param int $model_per_page
+     * @param bool $with_previous_button
+     * @param bool $with_next_button
+     * @param int $max_number_before_break // The max number of pages before use ellipses to simplify links.
+     * @return $this
+     */
+    public function pagination(
+        int $model_per_page,
+        bool $with_previous_button = true,
+        bool $with_next_button = true,
+        int $max_number_before_break = 10
+    ): static
     {
         if (!empty($this->result = $this->query->make())) {
             if (isset($this->query) && $this->query instanceof Select) {
-                $paginator = new Paginator(count($this->result), $model_per_page);
+                $paginator = new Paginator(
+                    count($this->result),
+                    $model_per_page,
+                    $with_previous_button,
+                    $with_next_button,
+                    $max_number_before_break
+                );
+
                 $this->pagination_links = $paginator->mountLinks();
                 $page_limits = $paginator->getOffsetAndLimit();
                 $this->query = $this->query->limit($page_limits['min'], $page_limits['max']);
