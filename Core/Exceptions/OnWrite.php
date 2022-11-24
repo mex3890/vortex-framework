@@ -2,13 +2,13 @@
 
 namespace Core\Exceptions;
 
-use Exception;
-use Throwable;
+use Core\Abstractions\VortexException;
+use Monolog\Level;
 
-class OnWrite extends Exception
+class OnWrite extends VortexException
 {
-    public function __construct(string $message = "Exception on try write file", int $code = 0, Throwable $previous = null)
+    public function __construct()
     {
-        parent::__construct($message, $code, $previous);
+        parent::__construct("Exception on try write file", 500, Level::Critical->value);
     }
 }

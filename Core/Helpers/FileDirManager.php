@@ -2,8 +2,6 @@
 
 namespace Core\Helpers;
 
-use Core\Exceptions\OnWrite;
-
 class FileDirManager
 {
     public static function retrieveFilesByDirectory(string $path): bool|array
@@ -16,7 +14,7 @@ class FileDirManager
         $files = [];
         foreach (FileDirManager::retrieveFilesByDirectory($file_path) as $file) {
             $files[] = $file;
-        };
+        }
 
         return in_array($file_name, $files);
     }

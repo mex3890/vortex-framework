@@ -27,10 +27,10 @@ class Insert
         foreach ($column_values as $column => $value) {
             if($i !== $count) {
                 $columns .= "$column, ";
-                $values .= "'$value', ";
+                $values .= '"' . $value . '",';
             } else {
                 $columns .= "$column)";
-                $values .= "'$value');";
+                $values .= '"' . $value . '");';
             }
             $i++;
         }

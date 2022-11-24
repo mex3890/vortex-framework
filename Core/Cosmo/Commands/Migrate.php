@@ -106,7 +106,7 @@ class Migrate extends Command
     {
         foreach (Schema::select('migrations')->make() as $migration) {
             $this->ran_migrations[] = $migration['migration'];
-        };
+        }
     }
 
     private function setCurrentStep()

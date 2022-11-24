@@ -2,8 +2,6 @@
 
 namespace Core\Helpers;
 
-use JetBrains\PhpStorm\ArrayShape;
-
 class Uri
 {
     public static function retrieveCurrentPath()
@@ -11,7 +9,7 @@ class Uri
         return parse_url($_SERVER['REQUEST_URI'])['path'];
     }
 
-    #[ArrayShape(["scheme" => "string", "host" => "string", "port" => "int", "user" => "string", "pass" => "string", "query" => "string", "path" => "string", "fragment" => "string"])] public static function retrieveServerParameters()
+    public static function retrieveServerParameters()
     {
         return parse_url($_SERVER['REQUEST_URI']);
     }

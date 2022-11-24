@@ -59,7 +59,10 @@ class Mailer
         return $this;
     }
 
-    public function withEmbeddedImage(array $image_name_path)
+    /**
+     * @throws Exception
+     */
+    public function withEmbeddedImage(array $image_name_path): static
     {
         foreach ($image_name_path as $name => $path) {
             $this->mail->addEmbeddedImage($path, $name);
