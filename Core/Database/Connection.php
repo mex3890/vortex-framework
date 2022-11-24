@@ -7,12 +7,12 @@ use PDO;
 
 class Connection
 {
-    private string $db_connection = '';
-    private string $db_host = '';
-    private string $db_database = '';
-    private string $db_charset = '';
-    private string $db_username = '';
-    private string $db_password = '';
+    private string $db_connection;
+    private string $db_host;
+    private string $db_database;
+    private string $db_charset;
+    private string $db_username;
+    private string $db_password;
     public PDO $connection;
 
     /**
