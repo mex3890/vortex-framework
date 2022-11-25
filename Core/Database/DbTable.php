@@ -2,7 +2,7 @@
 
 namespace Core\Database;
 
-use Core\Abstractions\Enums\SqlConstraints;
+use Core\Abstractions\Enums\SqlColumnTypes;
 use Core\Exceptions\InvalidColumnName;
 
 class DbTable
@@ -15,7 +15,7 @@ class DbTable
      */
     public function bigInt(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::BIGINT->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::BIGINT->value);
     }
 
     /**
@@ -23,7 +23,7 @@ class DbTable
      */
     public function binary(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::BINARY->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::BINARY->value);
     }
 
     /**
@@ -31,7 +31,7 @@ class DbTable
      */
     public function bit(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::BIT->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::BIT->value);
     }
 
     /**
@@ -39,7 +39,7 @@ class DbTable
      */
     public function blob(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::BLOB->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::BLOB->value);
     }
 
     /**
@@ -47,7 +47,7 @@ class DbTable
      */
     public function boolean(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::BOOLEAN->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::BOOLEAN->value);
     }
 
     /**
@@ -55,7 +55,7 @@ class DbTable
      */
     public function date(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::DATE->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::DATE->value);
     }
 
     /**
@@ -63,7 +63,7 @@ class DbTable
      */
     public function dateTime(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::DATETIME->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::DATETIME->value);
     }
 
     /**
@@ -71,7 +71,7 @@ class DbTable
      */
     public function double(string $column_name, int $column_length, int $column_decimal_length): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::DOUBLE->value, $column_length, $column_decimal_length);
+        return $this->makeColumn($column_name, SqlColumnTypes::DOUBLE->value, $column_length, $column_decimal_length);
     }
 
     /**
@@ -79,7 +79,7 @@ class DbTable
      */
     public function enum(string $column_name, array $options): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::ENUM->value, null, null, $options);
+        return $this->makeColumn($column_name, SqlColumnTypes::ENUM->value, null, null, $options);
     }
 
     /**
@@ -87,7 +87,7 @@ class DbTable
      */
     public function float(string $column_name, int $column_length, int $column_decimal_length): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::FLOAT->value, $column_length, $column_decimal_length);
+        return $this->makeColumn($column_name, SqlColumnTypes::FLOAT->value, $column_length, $column_decimal_length);
     }
 
     /**
@@ -95,7 +95,7 @@ class DbTable
      */
     public function id(string $column_name = 'id'): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::BIGINT->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::BIGINT->value);
     }
 
     /**
@@ -103,7 +103,7 @@ class DbTable
      */
     public function int(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::INT->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::INT->value);
     }
 
     /**
@@ -111,7 +111,7 @@ class DbTable
      */
     public function longText(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::LONGTEXT->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::LONGTEXT->value);
     }
 
     /**
@@ -119,7 +119,7 @@ class DbTable
      */
     public function mediumBlob(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::MEDIUMBLOB->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::MEDIUMBLOB->value);
     }
 
     /**
@@ -127,7 +127,7 @@ class DbTable
      */
     public function mediumInt(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::MEDIUMINT->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::MEDIUMINT->value);
     }
 
     /**
@@ -135,7 +135,7 @@ class DbTable
      */
     public function mediumText(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::MEDIUMTEXT->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::MEDIUMTEXT->value);
     }
 
     /**
@@ -143,7 +143,7 @@ class DbTable
      */
     public function text(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::TEXT->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::TEXT->value);
     }
 
     /**
@@ -151,7 +151,7 @@ class DbTable
      */
     public function tinyText(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::TINYTEXT->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::TINYTEXT->value);
     }
 
     /**
@@ -159,7 +159,7 @@ class DbTable
      */
     public function time(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::TIME->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::TIME->value);
     }
 
     /**
@@ -167,7 +167,7 @@ class DbTable
      */
     public function timeStamp(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::TIMESTAMP->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::TIMESTAMP->value);
     }
 
     /**
@@ -175,7 +175,7 @@ class DbTable
      */
     public function uuid(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::VARCHAR->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::VARCHAR->value);
     }
 
     /**
@@ -183,7 +183,7 @@ class DbTable
      */
     public function var(string $column_name, int $var_length): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::CHAR->value, $var_length);
+        return $this->makeColumn($column_name, SqlColumnTypes::CHAR->value, $var_length);
     }
 
     /**
@@ -191,7 +191,7 @@ class DbTable
      */
     public function varBinary(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::VARBINARY->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::VARBINARY->value);
     }
 
     /**
@@ -199,7 +199,7 @@ class DbTable
      */
     public function varchar(string $column_name, int $varchar_length): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::VARCHAR->value, $varchar_length);
+        return $this->makeColumn($column_name, SqlColumnTypes::VARCHAR->value, $varchar_length);
     }
 
     /**
@@ -207,7 +207,7 @@ class DbTable
      */
     public function smallInt(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::SMALLINT->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::SMALLINT->value);
     }
 
     /**
@@ -215,7 +215,7 @@ class DbTable
      */
     public function year(string $column_name): DbColumn
     {
-        return $this->makeColumn($column_name, SqlConstraints::YEAR->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::YEAR->value);
     }
 
     /**

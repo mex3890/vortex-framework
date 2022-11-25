@@ -8,6 +8,7 @@ use Core\Exceptions\FailedOnCreateObjectByModel;
 use Core\Exceptions\FailedOnGetObjectsByModel;
 use Core\Exceptions\FailedOnUpdateObjectByModel;
 use Core\Exceptions\MissingArguments;
+use Core\Exceptions\ViolationMinimalPagesBeforeBreakLinksList;
 use Core\Request\Paginator;
 
 abstract class Model
@@ -147,16 +148,21 @@ abstract class Model
      * @param int $model_per_page
      * @param bool $with_previous_button
      * @param bool $with_next_button
-     * @param int $max_number_before_break // The max number of pages before use ellipses to simplify links.
+     * @param int $max_number_before_break
      * @return $this
+     * @throws ViolationMinimalPagesBeforeBreakLinksList
      */
     public function pagination(
-        int $model_per_page,
+        int  $model_per_page,
         bool $with_previous_button = true,
         bool $with_next_button = true,
-        int $max_number_before_break = 10
+        int  $max_number_before_break = 10
     ): static
     {
+        if ($max_number_before_break < 7) {
+            throw new ViolationMinimalPagesBeforeBreakLinksList($max_number_before_break);
+        }
+
         if (!empty($this->result = $this->query->make())) {
             if (isset($this->query) && $this->query instanceof Select) {
                 $paginator = new Paginator(
@@ -172,6 +178,14 @@ abstract class Model
                 $this->query = $this->query->limit($page_limits['min'], $page_limits['max']);
             }
         } else {
+            $this->pagination_links = "
+                <nav class='pagination-nav'>
+                    <ul class='pagination-links-list'>
+                        <li class='page-item'>
+                            <a class='page-link' href=''>0</a>
+                        </li>
+                    </ul>
+                </nav>";
             $this->query = [];
         }
 
@@ -199,12 +213,14 @@ abstract class Model
                 foreach ($models as $model) {
                     $result[] = self::createObjectByArray($model);
                 }
-
-                $_GET['PAGINATION_LINKS'] = $this->pagination_links;
             }
+
+            $_GET['PAGINATION_LINKS'] = $this->pagination_links;
 
             return $result;
         }
+
+        $_GET['PAGINATION_LINKS'] = $this->pagination_links;
 
         return [];
     }

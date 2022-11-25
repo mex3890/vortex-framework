@@ -2,13 +2,13 @@
 
 namespace Core\Exceptions;
 
-use Exception;
-use Throwable;
+use Core\Abstractions\VortexException;
+use Monolog\Level;
 
-class UniqueIdOnTable extends Exception
+class UniqueIdOnTable extends VortexException
 {
-    public function __construct(string $message = "You can use only one id for this table", int $code = 500, Throwable $previous = null)
+    public function __construct()
     {
-        parent::__construct($message, $code, $previous);
+        parent::__construct("You can use only one id for this table", 500, Level::Critical->value);
     }
 }

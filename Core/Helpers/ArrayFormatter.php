@@ -4,7 +4,7 @@ namespace Core\Helpers;
 
 class ArrayFormatter
 {
-    public static function castingArrayToString(array $array)
+    public static function castingArrayToString(array $array): string
     {
         $string = "[" . PHP_EOL;
 
@@ -15,7 +15,7 @@ class ArrayFormatter
         return $string .= ']';
     }
 
-    function isAssoc(array $array)
+    function isAssoc(array $array): bool
     {
         if (array() === $array) {
             return false;

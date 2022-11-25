@@ -29,7 +29,7 @@ class MigrateList extends Command
     {
         foreach (Schema::select('migrations')->make() as $migration) {
             $this->ran_migrations[] = $migration['migration'];
-        };
+        }
 
         $this->cosmo->start($output, true, true);
         $this->cosmo->title('migration', 'list');

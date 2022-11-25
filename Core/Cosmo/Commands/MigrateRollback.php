@@ -48,7 +48,7 @@ class MigrateRollback extends Command
 
         foreach (Schema::select('migrations')->make() as $migration) {
             $this->ran_migrations[] = $migration['migration'];
-        };
+        }
 
         $required_step = $input->getOption('step') ?? null;
         $this->file_name = $input->getOption('filename') ?? '';
