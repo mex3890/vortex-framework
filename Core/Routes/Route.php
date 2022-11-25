@@ -2,7 +2,10 @@
 
 namespace Core\Routes;
 
+use Core\Exceptions\CsrfTokensDoNotMatch;
+use Core\Exceptions\MissingCsrfToken;
 use Core\Helpers\ClassManager;
+use Core\Request\Csrf;
 use Core\Request\Request;
 use Exception;
 use SmartyException;
@@ -25,7 +28,11 @@ class Route
     }
 
     /**
-     * @throws SmartyException
+     * @param string $route
+     * @param $path_to_include
+     * @return void
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
      */
     public function get(string $route, $path_to_include): void
     {
@@ -37,7 +44,11 @@ class Route
     }
 
     /**
-     * @throws SmartyException
+     * @param string $route
+     * @param $path_to_include
+     * @return void
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
      */
     public function post(string $route, $path_to_include): void
     {
@@ -48,7 +59,11 @@ class Route
     }
 
     /**
-     * @throws SmartyException
+     * @param string $route
+     * @param $path_to_include
+     * @return void
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
      */
     public function put(string $route, $path_to_include): void
     {
@@ -58,7 +73,11 @@ class Route
     }
 
     /**
-     * @throws SmartyException
+     * @param string $route
+     * @param $path_to_include
+     * @return void
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
      */
     public function patch(string $route, $path_to_include): void
     {
@@ -68,7 +87,11 @@ class Route
     }
 
     /**
-     * @throws SmartyException
+     * @param string $route
+     * @param $path_to_include
+     * @return void
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
      */
     public function delete(string $route, $path_to_include): void
     {
@@ -78,7 +101,11 @@ class Route
     }
 
     /**
-     * @throws SmartyException
+     * @param string $route
+     * @param callable $path_to_include
+     * @return void
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
      */
     public function default(string $route, callable $path_to_include): void
     {
@@ -86,7 +113,11 @@ class Route
     }
 
     /**
-     * @throws SmartyException
+     * @param string $route
+     * @param $callback
+     * @return void
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
      */
     private function route(string $route, $callback): void
     {
@@ -103,6 +134,10 @@ class Route
         if ($route == "/404") {
             call_user_func($callback, $request);
             exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $request_url === $route) {
+            Csrf::verifyIfRequestTokenMatchWithSessionToken();
         }
 
         if ($route_parts[0] === '' && count($request_url_parts) === 0) {

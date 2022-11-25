@@ -204,6 +204,8 @@ abstract class Model
                     foreach ($models as $model) {
                         $result[] = self::createObjectByArray($model);
                     }
+                } elseif (empty($models)) {
+                    $result = [];
                 } else {
                     $result = self::createObjectByArray($models[0]);
                 }
@@ -215,12 +217,16 @@ abstract class Model
                 }
             }
 
-            $_GET['PAGINATION_LINKS'] = $this->pagination_links;
+            if (isset($this->pagination_links)) {
+                $_GET['PAGINATION_LINKS'] = $this->pagination_links;
+            }
 
             return $result;
         }
 
-        $_GET['PAGINATION_LINKS'] = $this->pagination_links;
+        if (isset($this->pagination_links)) {
+            $_GET['PAGINATION_LINKS'] = $this->pagination_links;
+        }
 
         return [];
     }
