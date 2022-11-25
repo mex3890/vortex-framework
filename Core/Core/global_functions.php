@@ -1,5 +1,6 @@
 <?php
 
+use Core\Exceptions\MissingPaginationLinks;
 use Core\Galaxy\Galaxy;
 use Faker\Factory;
 use JetBrains\PhpStorm\NoReturn;
@@ -124,4 +125,16 @@ function content(string $path): string
 function faker(): \Faker\Generator
 {
     return Factory::create();
+}
+
+/**
+ * @throws MissingPaginationLinks
+ */
+function getPaginationLinks(): string
+{
+    if (isset($_GET['PAGINATION_LINKS'])) {
+        return $_GET['PAGINATION_LINKS'];
+    }
+
+    throw new MissingPaginationLinks();
 }
