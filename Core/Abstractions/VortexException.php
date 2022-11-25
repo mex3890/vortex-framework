@@ -9,7 +9,7 @@ abstract class VortexException extends \Exception
 {
     public function __construct(string $message = "", int $code = 0, int $level = null)
     {
-        if (!$level) {
+        if ($level) {
             Log::make($message, Level::Debug->value);
         }
 
