@@ -26,6 +26,8 @@ class Csrf
     {
         if (self::verifyIfSessionTokenExist() && self::verifyIfRequestTokenExist()) {
             if (self::getRequestTokenIfExist() === self::getSessionTokenIfExist()) {
+                self::regenerateTokenAfterVerification();
+
                 return true;
             }
 
@@ -37,9 +39,9 @@ class Csrf
         throw new MissingCsrfToken();
     }
 
-    private function createToken(): string
+    private static function createToken(): string
     {
-        return md5(uniqid());
+        return md5(uniqid(mt_rand(), true));
     }
 
     public static function getRequestTokenIfExist(): string
@@ -81,12 +83,17 @@ class Csrf
     private function setSessionTokenIfNotExist(): void
     {
         if (!$this->verifyIfSessionTokenExist()) {
-            $_SESSION[self::CSRF_TOKEN_KEY] = $this->createToken();
+            $_SESSION[self::CSRF_TOKEN_KEY] = self::createToken();
         }
     }
 
     private static function closeSessionWhenTokensDoNotMatch(): void
     {
         Session::destroy();
+    }
+
+    private static function regenerateTokenAfterVerification(): void
+    {
+        $_SESSION[self::CSRF_TOKEN_KEY] = self::createToken();
     }
 }
