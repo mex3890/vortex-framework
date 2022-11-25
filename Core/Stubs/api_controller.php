@@ -14,22 +14,12 @@ class MountController extends Controller
 
     }
 
-    public static function create()
-    {
-
-    }
-
     public function store()
     {
 
     }
 
     public static function show()
-    {
-
-    }
-
-    public static function edit()
     {
 
     }

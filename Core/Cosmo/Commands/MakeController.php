@@ -23,6 +23,7 @@ class MakeController extends Command
     private const CONTROLLER_ROOT_PATH = 'App\\Controllers\\';
     private const CONTROLLER_DUMMY = 'MountController';
     private const CONTENT_PATH = __DIR__ . '\\..\\..\\Stubs\\controller.php';
+    private const CONTENT_API_PATH = __DIR__ . '\\..\\..\\Stubs\\api_controller.php';
     private Cosmo $cosmo;
 
     public function __construct(string|null $file_name = null)
@@ -40,16 +41,27 @@ class MakeController extends Command
 
         $class_name = $input->getArgument('controller');
 
+        $is_api = $input->getOption('api');
+
         if (!FileDirManager::fileExistInDirectory("$class_name.php", self::CONTROLLER_ROOT_PATH)) {
 
             $class_name = StringFormatter::retrieveCamelCase($class_name);
 
-            FileDirManager::createFileByTemplate(
-                $class_name . '.php',
-                self::CONTROLLER_ROOT_PATH,
-                self::CONTENT_PATH,
-                [self::CONTROLLER_DUMMY => $class_name]
-            );
+            if ($is_api) {
+                FileDirManager::createFileByTemplate(
+                    $class_name . '.php',
+                    self::CONTROLLER_ROOT_PATH,
+                    self::CONTENT_API_PATH,
+                    [self::CONTROLLER_DUMMY => $class_name]
+                );
+            } else {
+                FileDirManager::createFileByTemplate(
+                    $class_name . '.php',
+                    self::CONTROLLER_ROOT_PATH,
+                    self::CONTENT_PATH,
+                    [self::CONTROLLER_DUMMY => $class_name]
+                );
+            }
 
             $this->cosmo->fileSuccessRow($class_name, 'created');
         } else {
@@ -66,6 +78,7 @@ class MakeController extends Command
     protected function configure()
     {
         $this->setHelp('Create a new Controller.')
-            ->addArgument('controller', InputArgument::REQUIRED, 'New Controller file name');
+            ->addArgument('controller', InputArgument::REQUIRED, 'New Controller file name')
+            ->addOption('api', 'a');
     }
 }
