@@ -2,15 +2,26 @@
 
 namespace Core\Routes;
 
+use Core\Exceptions\CsrfTokensDoNotMatch;
+use Core\Exceptions\MissingCsrfToken;
 use Core\Helpers\ClassManager;
+use Core\Request\Csrf;
 use Core\Request\Request;
 use Exception;
 use SmartyException;
 
 class Route
 {
+    /**
+     * @param array|string $middlewareClasses
+     * @return $this
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
+     */
     public function middleware(array|string $middlewareClasses): static
     {
+        Csrf::verifyIfRequestTokenMatchWithSessionToken();
+
         if (is_array($middlewareClasses)) {
             foreach ($middlewareClasses as $class) {
                 ClassManager::callStaticFunction($class, 'handle');
@@ -37,10 +48,17 @@ class Route
     }
 
     /**
+     * @param string $route
+     * @param $path_to_include
+     * @return void
      * @throws SmartyException
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
      */
     public function post(string $route, $path_to_include): void
     {
+        Csrf::verifyIfRequestTokenMatchWithSessionToken();
+
         $_REQUEST['LAST_ROUTE'] = $_POST['vortex_redirect'] ?? '/';
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $this->route($route, $path_to_include);
@@ -48,30 +66,51 @@ class Route
     }
 
     /**
+     * @param string $route
+     * @param $path_to_include
+     * @return void
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
      * @throws SmartyException
      */
     public function put(string $route, $path_to_include): void
     {
+        Csrf::verifyIfRequestTokenMatchWithSessionToken();
+
         if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
             $this->route($route, $path_to_include);
         }
     }
 
     /**
+     * @param string $route
+     * @param $path_to_include
+     * @return void
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
      * @throws SmartyException
      */
     public function patch(string $route, $path_to_include): void
     {
+        Csrf::verifyIfRequestTokenMatchWithSessionToken();
+
         if ($_SERVER['REQUEST_METHOD'] == 'PATCH') {
             $this->route($route, $path_to_include);
         }
     }
 
     /**
+     * @param string $route
+     * @param $path_to_include
+     * @return void
+     * @throws CsrfTokensDoNotMatch
+     * @throws MissingCsrfToken
      * @throws SmartyException
      */
     public function delete(string $route, $path_to_include): void
     {
+        Csrf::verifyIfRequestTokenMatchWithSessionToken();
+
         if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
             $this->route($route, $path_to_include);
         }

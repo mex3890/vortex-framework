@@ -1,7 +1,9 @@
 <?php
 
+use Core\Exceptions\MissingCsrfToken;
 use Core\Exceptions\MissingPaginationLinks;
 use Core\Galaxy\Galaxy;
+use Core\Request\Csrf;
 use Faker\Factory;
 use JetBrains\PhpStorm\NoReturn;
 
@@ -30,7 +32,7 @@ function view(string $view_name, array $params = []): void
     }
 
     $_GET['OLD_ATTRIBUTES'] = $old_attributes;
-    
+
     if (!empty($args)) {
         foreach ($args as $key => $arg) {
             $_GET[$key] = $arg;
@@ -137,4 +139,22 @@ function getPaginationLinks(): string
     }
 
     throw new MissingPaginationLinks();
+}
+
+/**
+ * @throws MissingCsrfToken
+ */
+function csrf(): string
+{
+    $current_session_token = Csrf::getSessionTokenIfExist();
+    $csrf_token = "<input name='csrf_token' type='hidden' value='$current_session_token'>";
+    $csrf_token .= vortexRedirect();
+    return $csrf_token;
+}
+
+function vortexRedirect(): string
+{
+    $last_route = $_GET['LAST_ROUTE'];
+
+    return "<input name='vortex_redirect' type='hidden' value='$last_route'>";
 }
