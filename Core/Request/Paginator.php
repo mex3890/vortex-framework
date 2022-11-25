@@ -8,7 +8,7 @@ class Paginator
     private int $count_per_page;
     private int $current_page;
     private int $last_page;
-    private string $pagination_links;
+    private string $pagination_links = '';
     private int $row_found;
     private const PREVIOUS_BUTTON_LABEL = 'Previous';
     private const NEXT_BUTTON_LABEL = 'Next';
