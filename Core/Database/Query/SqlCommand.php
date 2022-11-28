@@ -5,6 +5,7 @@ namespace Core\Database\Query;
 
 use Core\Abstractions\Enums\PhpExtra;
 use Core\Abstractions\Enums\SqlExpressions;
+use Core\Helpers\StringFormatter;
 
 class SqlCommand
 {
@@ -17,6 +18,8 @@ class SqlCommand
 
     public function where(string $column, string $value, string $operator = '='): static
     {
+        $value = StringFormatter::scapeQuotes($value);
+
         if ($operator === 'like') {
             if (!strpos($value, '%')) {
                 $value = "%$value%";

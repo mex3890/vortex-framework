@@ -145,7 +145,11 @@ class Paginator
 
     private function getQueryStrings()
     {
-        parse_str($_SERVER['QUERY_STRING'], $query_string);
+        if (!isset($_SERVER['QUERY_STRING'])) {
+            parse_str('&page=1', $query_string);
+        } else {
+            parse_str($_SERVER['QUERY_STRING'], $query_string);
+        }
 
         return $query_string;
     }
