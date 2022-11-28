@@ -2,6 +2,8 @@
 
 namespace Core\Helpers;
 
+use Core\Abstractions\Enums\PhpExtra;
+
 class StringFormatter
 {
     private const NON_SNAKE_CASE = [',', '.', '-', ' '];
@@ -81,5 +83,40 @@ class StringFormatter
                 break;
         }
         return $string;
+    }
+
+    public static function removeWhiteSpace(string $string): string
+    {
+        return str_replace(PhpExtra::PHP_WHITE_SPACE->value, '', $string);
+    }
+
+    public static function removeQuotes(string $string): string
+    {
+        return self::removeDoubleQuotes(self::removeSingleQuotes());
+    }
+
+    public static function removeSingleQuotes(string $string): string
+    {
+        return str_replace("'", '', $string);
+    }
+
+    public static function removeDoubleQuotes(string $string): string
+    {
+        return str_replace('"', '', $string);
+    }
+
+    public static function scapeSingleQuotes(string $string): string
+    {
+        return str_replace("'", "\'", $string);
+    }
+
+    public static function scapeDoubleQuotes(string $string): string
+    {
+        return str_replace('"', '\"', $string);
+    }
+
+    public static function scapeQuotes(string $string): string
+    {
+        return self::scapeDoubleQuotes(self::scapeSingleQuotes($string));
     }
 }
