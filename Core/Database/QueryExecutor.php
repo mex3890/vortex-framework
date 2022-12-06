@@ -6,7 +6,7 @@ use Core\Adapters\Collection;
 
 class QueryExecutor
 {
-    private bool|array $result;
+    private bool|array|object $result;
     private bool $is_fetch;
     private string $query;
 
