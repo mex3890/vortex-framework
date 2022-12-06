@@ -15,9 +15,9 @@ class ArrayFormatter
         return $string .= ']';
     }
 
-    function isAssoc(array $array): bool
+    public static function isAssoc(array $array): bool
     {
-        if (array() === $array) {
+        if ([] === $array) {
             return false;
         }
 

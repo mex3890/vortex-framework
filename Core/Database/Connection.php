@@ -7,12 +7,22 @@ use PDO;
 
 class Connection
 {
-    private string $db_connection;
-    private string $db_host;
-    private string $db_database;
-    private string $db_charset;
-    private string $db_username;
-    private string $db_password;
+    private const NEEDED_DB_CONSTANTS =
+        [
+            'DB_CONNECTION',
+            'DB_HOST',
+            'DB_DATABASE',
+            'DB_CHARSET',
+            'DB_USERNAME',
+            'DB_PASSWORD'
+        ];
+
+    private string $DB_CONNECTION;
+    private string $DB_HOST;
+    private string $DB_DATABASE;
+    private string $DB_CHARSET;
+    private string $DB_USERNAME;
+    private string $DB_PASSWORD;
     public PDO $connection;
 
     /**
@@ -20,17 +30,18 @@ class Connection
      */
     public function __construct()
     {
-        $count = 0;
+        $missed_constants = [];
 
-        $this->db_connection = $_ENV['DB_CONNECTION'] ?? $count++;
-        $this->db_host = $_ENV['DB_HOST'] ?? $count++;
-        $this->db_database = $_ENV['DB_DATABASE'] ?? $count++;
-        $this->db_charset = $_ENV['DB_CHARSET'] ?? $count++;
-        $this->db_username = $_ENV['DB_USERNAME'] ?? $count++;
-        $this->db_password = $_ENV['DB_PASSWORD'] ?? $count++;
+        foreach (self::NEEDED_DB_CONSTANTS as $constant) {
+            if (isset($_ENV[$constant])) {
+                $this->{$constant} = $_ENV[$constant];
+            } else {
+                $missed_constants[] = $constant;
+            }
+        }
 
-        if ($count !== 0) {
-            throw new MissingEnvironmentDatabaseConnectionConstants();
+        if (!empty($missed_constants)) {
+            throw new MissingEnvironmentDatabaseConnectionConstants($missed_constants);
         }
 
         $this->makeConnection();
@@ -38,17 +49,22 @@ class Connection
 
     private function makeConnection(): void
     {
+        $options = [
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ORACLE_NULLS => PDO::NULL_EMPTY_STRING
+        ];
+
         $this->connection = new PDO(
             $this->mountDns(),
-            $this->db_username,
-            $this->db_password
+            $this->DB_USERNAME,
+            $this->DB_PASSWORD,
+            $options
         );
-
-        $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     private function mountDns(): string
     {
-        return "$this->db_connection:host=$this->db_host;dbname=$this->db_database;charset=$this->db_charset";
+        return "$this->DB_CONNECTION:host=$this->DB_HOST;dbname=$this->DB_DATABASE;charset=$this->DB_CHARSET";
     }
 }

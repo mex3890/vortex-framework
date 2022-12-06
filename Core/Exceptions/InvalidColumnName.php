@@ -7,8 +7,12 @@ use Monolog\Level;
 
 class InvalidColumnName extends VortexException
 {
-    public function __construct()
+    public function __construct(string $column)
     {
-        parent::__construct("The column name can't is ' '", 500, Level::Critical->value);
+        parent::__construct(
+            "The column name can't is '$column', name is invalid because starts with $|#|@",
+            500,
+            Level::Critical->value
+        );
     }
 }

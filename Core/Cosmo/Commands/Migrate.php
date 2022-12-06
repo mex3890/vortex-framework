@@ -75,11 +75,18 @@ class Migrate extends Command
                 $this->cosmo->fileFailRow($this->file_name, 'already ran');
             }
         } else {
+            $index = 1;
             foreach ($files as $file) {
                 if (!in_array($file, $this->ran_migrations)) {
                     include self::MIGRATION_ROOT_PATH . $file;
                     $classes = get_declared_classes();
-                    $count = count($classes) - 2;
+                    if ($index === 1) {
+                        $count = count($classes) - 2;
+                    } else {
+                        $count = count($classes) - 1;
+                    }
+
+                    $index++;
                     $class = $classes[$count];
 
                     ClassManager::callStaticFunction($class, 'up');

@@ -2,65 +2,99 @@
 
 namespace Core\Database;
 
-use Closure;
 use Core\Abstractions\Enums\SqlExpressions;
-use Core\Database\Query\Delete;
-use Core\Database\Query\Insert;
-use Core\Database\Query\Select;
-use Core\Database\Query\Update;
+use Core\Database\Query\CreateTableBuilder;
+use Core\Database\Query\DeleteBuilder;
+use Core\Database\Query\DropTableBuilder;
+use Core\Database\Query\InsertBuilder;
+use Core\Database\Query\SelectBuilder;
+use Core\Database\Query\UpdateBuilder;
 
 class Schema
 {
-
-    public static function create(string $table_name, DbTable $table, Closure $callback): void
+    /**
+     * @param string $table
+     * @param callable $callback
+     * @return bool
+     */
+    public static function create(string $table, callable $callback): bool
     {
-        $table = $callback->call(new DbTable());
-        new QueryExecutor(SqlExpressions::CREATE->value, $table_name, $table);
+        $table = new CreateTableBuilder($table, $callback);
+        return $table->get();
     }
 
-    public static function dropIfExists(string $table_name): void
+    /**
+     * @param string $table
+     * @return bool
+     */
+    public static function drop(string $table): bool
     {
-        new QueryExecutor(SqlExpressions::DROP_TABLE->value, $table_name);
+        $response = new DropTableBuilder($table);
+        return $response->get();
     }
 
-    public static function select(string $table_name, array|string $select_columns = '*'): Select
+    /**
+     * @param string $table
+     * @param array|string $select_columns
+     * @return SelectBuilder
+     */
+    public static function select(string $table, array|string $select_columns = '*'): SelectBuilder
     {
-        return new Select($table_name, $select_columns);
+        return new SelectBuilder($table, $select_columns);
     }
 
-    public static function insert(string $table_name, array $column_values): bool|array
+    /**
+     * @param string $table
+     * @param array $column_values
+     * @return InsertBuilder
+     */
+    public static function insert(string $table, array $column_values): InsertBuilder
     {
-        $insert = new Insert($table_name, $column_values);
-        return $insert->make();
+        return new InsertBuilder($table, $column_values);
     }
 
-    public static function delete(string $table_name, string $column, string $value, string $operator = '='): array|bool
+    /**
+     * @param string $table
+     * @return DeleteBuilder
+     */
+    public static function delete(string $table): DeleteBuilder
     {
-        $delete = new Delete($table_name, $column, $value, $operator);
-        return $delete->make();
+        return new DeleteBuilder($table);
     }
 
-    public static function update(string $table_name, array $new_values, string $search_value, string $column = 'id', string $operator = '='): bool|array
+    /**
+     * @param string $table
+     * @param array $new_values
+     * @return UpdateBuilder
+     */
+    public static function update(string $table, array $new_values): UpdateBuilder
     {
-        $update = new Update($table_name, $new_values, $search_value, $column, $operator);
-        return $update->make();
+        return new UpdateBuilder($table, $new_values);
     }
 
-    public static function last(string $table_name, string $column = 'id'): bool|array
+    /**
+     * @param string $table
+     * @param string $column
+     * @return bool|array
+     */
+    public static function last(string $table, string $column = 'id'): bool|array
     {
-        $last = new Select($table_name);
-        return $last->orderBy($column)
-            ->direction()
+        $query = new SelectBuilder($table);
+        return $query->orderBy([$column => SqlExpressions::DESC->value])
             ->limit(1)
-            ->make();
+            ->get();
     }
 
-    public static function first(string $table_name, string $column = 'id'): bool|array
+    /**
+     * @param string $table
+     * @param string $column
+     * @return bool|array
+     */
+    public static function first(string $table, string $column = 'id'): bool|array
     {
-        $last = new Select($table_name);
-        return $last->orderBy($column)
-            ->direction('ASC')
+        $query = new SelectBuilder($table);
+        return $query->orderBy([$column => SqlExpressions::ASC->value])
             ->limit(1)
-            ->make();
+            ->get();
     }
 }
