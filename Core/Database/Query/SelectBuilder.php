@@ -163,7 +163,7 @@ class SelectBuilder extends QueryBuilder
      * @param bool $with_previous_button
      * @param bool $with_next_button
      * @param int $max_number_before_break
-     * @return void
+     * @return bool|Collection|string
      * @throws ViolationMinimalPagesBeforeBreakLinksList
      */
     public function pagination(
@@ -171,7 +171,7 @@ class SelectBuilder extends QueryBuilder
         bool $with_previous_button = true,
         bool $with_next_button = true,
         int  $max_number_before_break = 10
-    )
+    ): bool|string|Collection
     {
         if ($max_number_before_break < 7) {
             throw new ViolationMinimalPagesBeforeBreakLinksList($max_number_before_break);
