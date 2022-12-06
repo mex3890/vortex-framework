@@ -3,6 +3,7 @@
 namespace Core\Database;
 
 use Core\Abstractions\Enums\SqlExpressions;
+use Core\Abstractions\Model;
 use Core\Database\Query\CreateTableBuilder;
 use Core\Database\Query\DeleteBuilder;
 use Core\Database\Query\DropTableBuilder;
@@ -38,8 +39,12 @@ class Schema
      * @param array|string $select_columns
      * @return SelectBuilder
      */
-    public static function select(string $table, array|string $select_columns = '*'): SelectBuilder
+    public static function select(string $table, array|string $select_columns = '*', ?Model $model = null): SelectBuilder
     {
+        if ($model) {
+            return new SelectBuilder($table, $select_columns, $model);
+        }
+
         return new SelectBuilder($table, $select_columns);
     }
 

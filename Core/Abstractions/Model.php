@@ -12,11 +12,8 @@ use Core\Exceptions\MissingArguments;
 
 abstract class Model
 {
-    protected string $table = '';
-    protected array $args;
-    protected SelectBuilder|array $query;
-    protected array $result;
-    protected string $pagination_links;
+    public string $table = '';
+    public array $args;
 
     public function __construct(array $args = [])
     {
@@ -90,23 +87,6 @@ abstract class Model
     {
         $model = new static();
 
-        return Schema::select($model->table, $select_columns);
-    }
-
-    private static function createObjectByArray(array $args): static
-    {
-        $object = new static($args);
-
-        foreach ($object->args as $key => $arg) {
-            $object->$key = $arg;
-        }
-
-        unset($object->args);
-        unset($object->query);
-        unset($object->table);
-        unset($object->pagination_links);
-        unset($object->result);
-
-        return $object;
+        return Schema::select($model->table, $select_columns, new static);
     }
 }

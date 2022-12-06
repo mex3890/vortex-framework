@@ -22,8 +22,19 @@ abstract class QueryBuilder
     public function get()
     {
         $this->callQueryBuilder();
+    }
 
-        var_dump($this->query);
-        die();
+    protected function mountModelObject($model, array $args): object
+    {
+        $object = new $model();
+
+        foreach ($args as $key => $value) {
+            $object->$key = $value;
+        }
+
+        unset($object->args);
+        unset($object->table);
+
+        return $object;
     }
 }

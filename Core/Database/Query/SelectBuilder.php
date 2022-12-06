@@ -4,6 +4,7 @@ namespace Core\Database\Query;
 
 use Core\Abstractions\Enums\PhpExtra;
 use Core\Abstractions\Enums\SqlExpressions;
+use Core\Abstractions\Model;
 use Core\Adapters\Collection;
 use Core\Database\QueryExecutor;
 use Core\Exceptions\ViolationMinimalPagesBeforeBreakLinksList;
@@ -11,6 +12,7 @@ use Core\Request\Paginator;
 use Core\Traits\JoinClauses;
 use Core\Traits\QueryConditionals;
 use Core\Traits\QueryFilters;
+use Dotenv\Dotenv;
 
 class SelectBuilder extends QueryBuilder
 {
@@ -20,18 +22,23 @@ class SelectBuilder extends QueryBuilder
     private array $select_constraints;
     private string $pagination_links;
     private array $pagination_params;
+    private Model $model;
 
     /**
      * @param string $table
      * @param array|string|null $columns
      * If you do not need to specify the columns and <br>do not want to use the default value ( * ), use null
      */
-    public function __construct(string $table = '', null|array|string $columns = '*')
+    public function __construct(string $table = '', null|array|string $columns = '*', ?Model $model = null)
     {
         parent::__construct($table);
 
         if ($columns !== '' && $columns !== null) {
             $this->columns = $columns;
+        }
+
+        if ($model) {
+            $this->model = $model;
         }
     }
 
@@ -163,7 +170,7 @@ class SelectBuilder extends QueryBuilder
      * @param bool $with_previous_button
      * @param bool $with_next_button
      * @param int $max_number_before_break
-     * @return bool|Collection|string
+     * @return void
      * @throws ViolationMinimalPagesBeforeBreakLinksList
      */
     public function pagination(
@@ -171,7 +178,7 @@ class SelectBuilder extends QueryBuilder
         bool $with_previous_button = true,
         bool $with_next_button = true,
         int  $max_number_before_break = 10
-    ): bool|string|Collection
+    )
     {
         if ($max_number_before_break < 7) {
             throw new ViolationMinimalPagesBeforeBreakLinksList($max_number_before_break);
@@ -189,7 +196,7 @@ class SelectBuilder extends QueryBuilder
 
     private function makePagination(Collection $collection)
     {
-        if (!empty($collection)) {
+        if (!empty($collection) && isset($collection[0])) {
             $paginator = new Paginator(
                 count($collection),
 
@@ -233,11 +240,17 @@ class SelectBuilder extends QueryBuilder
             }
 
             $response = new QueryExecutor(true, $this->query);
-
-            return $response->execute();
         }
 
-        return $response->execute();
+        $collection = $response->execute();
+        $newCollection = new Collection();
+
+        foreach ($collection as $model) {
+            $model = $this->mountModelObject($this->model, $model);
+            $newCollection->append($model);
+        }
+
+        return $newCollection;
     }
 
     private function mountCustomColumn(string $expression_column, ?string $alias = null)
