@@ -14,8 +14,8 @@ class CreateTableBuilder extends QueryBuilder
     public function __construct(string $table, callable $callable)
     {
         parent::__construct($table);
-        $this->tableBuilder = call_user_func_array($callable, [new TableBuilder($table)]);
-        var_dump($this->tableBuilder);
+
+        $this->tableBuilder = call_user_func_array($callable, [new TableBuilder($table)])->columns;
     }
 
     protected function callQueryBuilder()

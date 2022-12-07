@@ -26,7 +26,7 @@ class Seed extends Command
     public function __construct(string|null $file_name = null)
     {
         $this->cosmo = new Cosmo();
-        parent::__construct();
+        parent::__construct('');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

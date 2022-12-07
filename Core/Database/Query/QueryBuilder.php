@@ -22,8 +22,5 @@ abstract class QueryBuilder
     public function get()
     {
         $this->callQueryBuilder();
-
-        var_dump($this->query);
-        die();
     }
 }

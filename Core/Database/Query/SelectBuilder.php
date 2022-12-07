@@ -4,9 +4,11 @@ namespace Core\Database\Query;
 
 use Core\Abstractions\Enums\PhpExtra;
 use Core\Abstractions\Enums\SqlExpressions;
+use Core\Abstractions\Model;
 use Core\Adapters\Collection;
 use Core\Database\QueryExecutor;
 use Core\Exceptions\ViolationMinimalPagesBeforeBreakLinksList;
+use Core\Helpers\ObjectConstructor;
 use Core\Request\Paginator;
 use Core\Traits\JoinClauses;
 use Core\Traits\QueryConditionals;
@@ -20,18 +22,24 @@ class SelectBuilder extends QueryBuilder
     private array $select_constraints;
     private string $pagination_links;
     private array $pagination_params;
+    private Model $model;
 
     /**
      * @param string $table
+     * @param Model|null $model
      * @param array|string|null $columns
      * If you do not need to specify the columns and <br>do not want to use the default value ( * ), use null
      */
-    public function __construct(string $table = '', null|array|string $columns = '*')
+    public function __construct(string $table = '', null|array|string $columns = '*', ?Model $model = null)
     {
         parent::__construct($table);
 
         if ($columns !== '' && $columns !== null) {
             $this->columns = $columns;
+        }
+
+        if ($model) {
+            $this->model = $model;
         }
     }
 
@@ -163,7 +171,7 @@ class SelectBuilder extends QueryBuilder
      * @param bool $with_previous_button
      * @param bool $with_next_button
      * @param int $max_number_before_break
-     * @return void
+     * @return bool|Collection|string
      * @throws ViolationMinimalPagesBeforeBreakLinksList
      */
     public function pagination(
@@ -171,7 +179,7 @@ class SelectBuilder extends QueryBuilder
         bool $with_previous_button = true,
         bool $with_next_button = true,
         int  $max_number_before_break = 10
-    ): void
+    ): bool|string|Collection
     {
         if ($max_number_before_break < 7) {
             throw new ViolationMinimalPagesBeforeBreakLinksList($max_number_before_break);
@@ -184,12 +192,12 @@ class SelectBuilder extends QueryBuilder
             'max_number_before_break' => $max_number_before_break
         ];
 
-        $this->get();
+        return $this->get();
     }
 
     private function makePagination(Collection $collection)
     {
-        if (!empty($collection)) {
+        if (!empty($collection) && isset($collection[0])) {
             $paginator = new Paginator(
                 count($collection),
 
@@ -202,10 +210,11 @@ class SelectBuilder extends QueryBuilder
             $this->pagination_links = $paginator->mountLinks();
             $page_limits = $paginator->getOffsetAndLimit();
 
+            $this->query = str_replace(';', PhpExtra::WHITE_SPACE->value, $this->query);
+
             $this->query = $this->query . SqlExpressions::LIMIT->value .
                 PhpExtra::WHITE_SPACE->value .
                 ($page_limits['max'] ? "{$page_limits['min']}, {$page_limits['max']}" : $page_limits['min']);
-
         } else {
             $this->pagination_links = "
                 <nav class='pagination-nav'>
@@ -227,12 +236,27 @@ class SelectBuilder extends QueryBuilder
         if (isset($this->pagination_params)) {
             $this->makePagination($response->execute());
 
-            $response = new QueryExecutor(true, $this->query);
+            if (isset($this->pagination_links)) {
+                $_GET['PAGINATION_LINKS'] = $this->pagination_links;
+            }
 
-            return $response->execute();
+            $response = new QueryExecutor(true, $this->query);
         }
 
-        return $response->execute();
+        $collection = $response->execute();
+        $newCollection = new Collection();
+
+        if (isset($this->model)) {
+            foreach ($collection as $model) {
+                $model = ObjectConstructor::mountModelObject($this->model, $model);
+
+                $newCollection->append($model);
+            }
+        } else {
+            $newCollection = $collection;
+        }
+
+        return $newCollection;
     }
 
     private function mountCustomColumn(string $expression_column, ?string $alias = null)

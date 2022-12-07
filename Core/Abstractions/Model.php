@@ -9,14 +9,12 @@ use Core\Database\Query\UpdateBuilder;
 use Core\Database\Schema;
 use Core\Exceptions\FailedOnCreateObjectByModel;
 use Core\Exceptions\MissingArguments;
+use Core\Helpers\ObjectConstructor;
 
 abstract class Model
 {
-    protected string $table = '';
-    protected array $args;
-    protected SelectBuilder|array $query;
-    protected array $result;
-    protected string $pagination_links;
+    public string $table = '';
+    public array $args;
 
     public function __construct(array $args = [])
     {
@@ -24,11 +22,11 @@ abstract class Model
     }
 
     /**
-     * @return $this
+     * @return object
      * @throws FailedOnCreateObjectByModel
      * @throws MissingArguments
      */
-    public function create(): static
+    public function create(): object
     {
         if (isset($this->args)) {
             $model = Schema::insert($this->table, $this->args)->get();
@@ -37,7 +35,7 @@ abstract class Model
                 throw new FailedOnCreateObjectByModel(self::class);
             }
 
-            return self::createObjectByArray($this->args);
+            return ObjectConstructor::mountModelObject(new static(), $this->args);
         }
 
         throw new MissingArguments('create');
@@ -65,48 +63,29 @@ abstract class Model
     }
 
     /**
-     * @param string $column
      * @return bool|Collection
      */
-    public static function first(string $column = 'id'): bool|Collection
+    public static function first(): bool|Collection
     {
         $model = new static([]);
 
-        return Schema::first($model->table, $column);
+        return Schema::first($model->table);
     }
 
     /**
-     * @param string $column
-     * @return bool|Model
+     * @return bool|Collection
      */
-    public static function last(string $column = 'id'): bool|Collection
+    public static function last(): bool|Collection
     {
         $model = new static([]);
 
-        return Schema::last($model->table, $column);
+        return Schema::last($model->table);
     }
 
     public static function find(string|array $select_columns = '*'): SelectBuilder
     {
         $model = new static();
 
-        return Schema::select($model->table, $select_columns);
-    }
-
-    private static function createObjectByArray(array $args): static
-    {
-        $object = new static($args);
-
-        foreach ($object->args as $key => $arg) {
-            $object->$key = $arg;
-        }
-
-        unset($object->args);
-        unset($object->query);
-        unset($object->table);
-        unset($object->pagination_links);
-        unset($object->result);
-
-        return $object;
+        return Schema::select($model->table, $select_columns, new static);
     }
 }

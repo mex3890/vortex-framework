@@ -408,7 +408,7 @@ class Validation
      */
     private static function unique($arg, $table, $column): bool|string
     {
-        $search = Schema::select($table, $column)->where($column, $arg)->make();
+        $search = Schema::select($table, $column)->where($column, $arg)->get();
 
         if (empty($search)) {
             return true;

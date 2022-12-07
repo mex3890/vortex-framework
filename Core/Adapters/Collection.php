@@ -3,7 +3,6 @@
 namespace Core\Adapters;
 
 use ArrayObject;
-use JetBrains\PhpStorm\Internal\LanguageLevelTypeAware;
 
 class Collection extends ArrayObject
 {
