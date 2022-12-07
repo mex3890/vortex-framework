@@ -15,4 +15,5 @@ enum PhpExtra: string
     case EQUAL_OPERATOR = '=';
     case UNDERLINE = '_';
     case END_POINT = '.';
+    case PERCENTAGE = '%';
 }

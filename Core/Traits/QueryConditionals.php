@@ -67,7 +67,7 @@ trait QueryConditionals
     public function where(string $column, string|int $value, string $operator = '='): static
     {
         $this->has_condition = true;
-        $value = StringFormatter::scapeQuotes($value);
+        $value = StringFormatter::escapeQuotes($value);
 
         $this->conditionals[SqlExpressions::WHERE->value] = SqlExpressions::WHERE->value .
             PhpExtra::WHITE_SPACE->value .
@@ -85,7 +85,7 @@ trait QueryConditionals
     public function and(string $column, string|int $value, string $operator = '='): static
     {
         $this->has_condition = true;
-        $value = StringFormatter::scapeQuotes($value);
+        $value = StringFormatter::escapeQuotes($value);
 
         $this->conditionals[SqlExpressions::AND->value][] = SqlExpressions::AND->value .
             PhpExtra::WHITE_SPACE->value .
@@ -146,7 +146,7 @@ trait QueryConditionals
     public function whereNot(string $column, string|int $value, string $operator = '='): static
     {
         $this->has_condition = true;
-        $value = StringFormatter::scapeQuotes($value);
+        $value = StringFormatter::escapeQuotes($value);
 
         $this->conditionals[SqlExpressions::WHERE->value] = SqlExpressions::WHERE->value .
             PhpExtra::WHITE_SPACE->value .
@@ -172,7 +172,7 @@ trait QueryConditionals
     public function or(string $column, string|int $value, string $operator = '='): static
     {
         $this->has_condition = true;
-        $value = StringFormatter::scapeQuotes($value);
+        $value = StringFormatter::escapeQuotes($value);
 
         $this->conditionals[SqlExpressions::OR->value][] = SqlExpressions::OR->value .
             PhpExtra::WHITE_SPACE->value .
