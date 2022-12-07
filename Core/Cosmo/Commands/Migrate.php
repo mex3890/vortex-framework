@@ -66,7 +66,7 @@ class Migrate extends Command
                 Schema::insert('migrations', [
                     'migration' => "$this->file_name",
                     'step' => $this->step
-                ]);
+                ])->get();
 
                 $this->cosmo->fileSuccessRow($this->file_name, 'run');
             } else {
@@ -75,11 +75,18 @@ class Migrate extends Command
                 $this->cosmo->fileFailRow($this->file_name, 'already ran');
             }
         } else {
+            $index = 1;
             foreach ($files as $file) {
                 if (!in_array($file, $this->ran_migrations)) {
                     include self::MIGRATION_ROOT_PATH . $file;
                     $classes = get_declared_classes();
-                    $count = count($classes) - 2;
+                    if ($index === 1) {
+                        $count = count($classes) - 2;
+                    } else {
+                        $count = count($classes) - 1;
+                    }
+
+                    $index++;
                     $class = $classes[$count];
 
                     ClassManager::callStaticFunction($class, 'up');
@@ -88,7 +95,7 @@ class Migrate extends Command
                     Schema::insert('migrations', [
                         'migration' => "$file",
                         'step' => $this->step
-                    ]);
+                    ])->get();
                 } else {
                     $this->cosmo->fileFailRow($file, 'already ran');
                 }
@@ -104,14 +111,14 @@ class Migrate extends Command
 
     private function loadRanMigration()
     {
-        foreach (Schema::select('migrations')->make() as $migration) {
+        foreach (Schema::select('migrations')->get() as $migration) {
             $this->ran_migrations[] = $migration['migration'];
         }
     }
 
     private function setCurrentStep()
     {
-        if (empty(Schema::last('migrations'))) {
+        if (Schema::last('migrations') === false || Schema::last('migrations')->count() === 0) {
             $this->step = 0;
         } else {
             $this->step = Schema::last('migrations')[0]['step'];

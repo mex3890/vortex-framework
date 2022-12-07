@@ -3,6 +3,7 @@
 use Core\Exceptions\MissingCsrfToken;
 use Core\Exceptions\MissingPaginationLinks;
 use Core\Galaxy\Galaxy;
+use Core\Helpers\Environment;
 use Core\Request\Csrf;
 use Faker\Factory;
 use JetBrains\PhpStorm\NoReturn;
@@ -49,7 +50,7 @@ function view(string $view_name, array $params = []): void
     $_SERVER['REQUEST_URI'] = $route;
     $_GET['LAST_ROUTE'] = $route;
 
-    header('Location: ' . \Core\Helpers\Environment::appUrl() . $route);
+    header('Location: ' . Environment::appUrl() . $route);
     require __DIR__ . '/../../../../../public/index.php';
 }
 
@@ -88,6 +89,13 @@ function view(string $view_name, array $params = []): void
         echo '<pre>' . var_export($var, true) . '</pre>';
     }
     die();
+}
+
+function dump(...$vars): void
+{
+    foreach ($vars as $var) {
+        echo '<pre>' . var_export($var, true) . '</pre>';
+    }
 }
 
 function old(string $key)

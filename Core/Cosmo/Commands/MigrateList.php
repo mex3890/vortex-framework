@@ -27,7 +27,7 @@ class MigrateList extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        foreach (Schema::select('migrations')->make() as $migration) {
+        foreach (Schema::select('migrations')->get() as $migration) {
             $this->ran_migrations[] = $migration['migration'];
         }
 

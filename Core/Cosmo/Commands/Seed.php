@@ -26,7 +26,7 @@ class Seed extends Command
     public function __construct(string|null $file_name = null)
     {
         $this->cosmo = new Cosmo();
-        parent::__construct();
+        parent::__construct('');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -61,10 +61,17 @@ class Seed extends Command
                 }
             }
         } else {
+            $index = 1;
             foreach ($files as $file) {
                 include self::SEEDER_ROOT_PATH . $file;
                 $classes = get_declared_classes();
-                $count = count($classes) - 2;
+                if ($index === 1) {
+                    $count = count($classes) - 2;
+                } else {
+                    $count = count($classes) - 1;
+                }
+
+                $index++;
                 $class = $classes[$count];
 
                 ClassManager::callStaticFunction($class, 'handler');
