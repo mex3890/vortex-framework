@@ -105,19 +105,24 @@ class StringFormatter
         return str_replace('"', '', $string);
     }
 
-    public static function scapeSingleQuotes(string $string): string
+    public static function escapeSingleQuotes(string $string): string
     {
-        return str_replace("'", "\'", $string);
+        return self::escape("'", $string);
     }
 
-    public static function scapeDoubleQuotes(string $string): string
+    public static function escapeDoubleQuotes(string $string): string
     {
-        return str_replace('"', '\"', $string);
+        return self::escape('"', $string);
     }
 
-    public static function scapeQuotes(string $string): string
+    public static function escapeQuotes(string $string): string
     {
-        return self::scapeDoubleQuotes(self::scapeSingleQuotes($string));
+        return self::escapeDoubleQuotes(self::escapeSingleQuotes($string));
+    }
+
+    public static function escape(string $escape_value, string $string): array|string
+    {
+        return str_replace($escape_value, "/$escape_value", $string);
     }
 
     public static function str_starts_with(string $string, array|string $substring): bool
@@ -183,7 +188,7 @@ class StringFormatter
                 continue;
             }
 
-                $final_string .= "$value";
+            $final_string .= "$value";
             $index++;
         }
 
