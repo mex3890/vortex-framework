@@ -20,16 +20,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class Migrate extends Command
 {
-    private string|null $file_name;
     private array $ran_migrations = [];
     private const MIGRATION_ROOT_PATH = 'App\\Migrations\\';
     private mixed $step = null;
     private Cosmo $cosmo;
 
-    public function __construct(string|null $file_name = null)
+    public function __construct()
     {
         $this->cosmo = new Cosmo();
-        $this->file_name = $file_name;
+
         parent::__construct();
     }
 
@@ -52,11 +51,11 @@ class Migrate extends Command
 
         $this->cosmo->indexRow('migration', 'status');
 
-        $this->file_name = $input->getOption('name');
+        $file_name = $input->getOption('name');
 
-        if ($this->file_name) {
-            if (!in_array($this->file_name, $this->ran_migrations)) {
-                include self::MIGRATION_ROOT_PATH . $this->file_name;
+        if ($file_name) {
+            if (!in_array($file_name, $this->ran_migrations)) {
+                include self::MIGRATION_ROOT_PATH . $file_name;
                 $classes = get_declared_classes();
                 $count = count($classes) - 2;
                 $class = $classes[$count];
@@ -64,15 +63,15 @@ class Migrate extends Command
                 ClassManager::callStaticFunction($class, 'up');
 
                 Schema::insert('migrations', [
-                    'migration' => "$this->file_name",
+                    'migration' => "$file_name",
                     'step' => $this->step
                 ])->get();
 
-                $this->cosmo->fileSuccessRow($this->file_name, 'run');
+                $this->cosmo->fileSuccessRow($file_name, 'run');
             } else {
-                $_SERVER['COMMAND'] = 'php cosmo migrate ' . $this->file_name;
-                Log::make('Migration ' . $this->file_name . ' already ran', Level::Notice->value);
-                $this->cosmo->fileFailRow($this->file_name, 'already ran');
+                $_SERVER['COMMAND'] = 'php cosmo migrate ' . $file_name;
+                Log::make('Migration ' . $file_name . ' already ran', Level::Notice->value);
+                $this->cosmo->fileFailRow($file_name, 'already ran');
             }
         } else {
             $index = 1;
