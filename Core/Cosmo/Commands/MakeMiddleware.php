@@ -25,11 +25,10 @@ class MakeMiddleware extends Command
     private const CONTENT_PATH = __DIR__ . '\\..\\..\\Stubs\\middleware.php';
     private Cosmo $cosmo;
 
-    public function __construct(string|null $file_name = null)
+    public function __construct()
     {
         $this->cosmo = new Cosmo();
         parent::__construct();
-        $this->file_name = $file_name;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

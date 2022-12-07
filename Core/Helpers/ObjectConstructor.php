@@ -2,11 +2,11 @@
 
 namespace Core\Helpers;
 
-use stdClass;
+use Core\Abstractions\Model;
 
 class ObjectConstructor
 {
-    public static function mountModelObject(object $model, array $args): object
+    public static function mountModelObject(object $model, array $args): Model
     {
         $object = new $model();
 

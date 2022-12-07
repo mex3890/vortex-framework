@@ -22,11 +22,11 @@ abstract class Model
     }
 
     /**
-     * @return object
+     * @return $this
      * @throws FailedOnCreateObjectByModel
      * @throws MissingArguments
      */
-    public function create(): object
+    public function create(): static
     {
         if (isset($this->args)) {
             $model = Schema::insert($this->table, $this->args)->get();
