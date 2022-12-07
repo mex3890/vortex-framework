@@ -62,25 +62,23 @@ abstract class Model
     }
 
     /**
-     * @param string $column
      * @return bool|Collection
      */
-    public static function first(string $column = 'id'): bool|Collection
+    public static function first(): bool|Collection
     {
         $model = new static([]);
 
-        return Schema::first($model->table, $column);
+        return Schema::first($model->table);
     }
 
     /**
-     * @param string $column
-     * @return bool|Model
+     * @return bool|Collection
      */
-    public static function last(string $column = 'id'): bool|Collection
+    public static function last(): bool|Collection
     {
         $model = new static([]);
 
-        return Schema::last($model->table, $column);
+        return Schema::last($model->table);
     }
 
     public static function find(string|array $select_columns = '*'): SelectBuilder
