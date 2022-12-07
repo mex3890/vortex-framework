@@ -23,18 +23,4 @@ abstract class QueryBuilder
     {
         $this->callQueryBuilder();
     }
-
-    protected function mountModelObject($model, array $args): object
-    {
-        $object = new $model();
-
-        foreach ($args as $key => $value) {
-            $object->$key = $value;
-        }
-
-        unset($object->args);
-        unset($object->table);
-
-        return $object;
-    }
 }

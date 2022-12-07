@@ -46,7 +46,7 @@ class MigrateRollback extends Command
         $this->cosmo->title('migration', 'rollback');
         $this->cosmo->indexRow('migration', 'status');
 
-        foreach (Schema::select('migrations')->make() as $migration) {
+        foreach (Schema::select('migrations')->get() as $migration) {
             $this->ran_migrations[] = $migration['migration'];
         }
 
@@ -54,7 +54,7 @@ class MigrateRollback extends Command
         $this->file_name = $input->getOption('filename') ?? '';
 
         if ($required_step !== null) {
-            foreach (Schema::select('migrations')->where('step', $required_step)->make() as $migration) {
+            foreach (Schema::select('migrations')->where('step', $required_step)->get() as $migration) {
                 $this->rollback_migrations[] = $migration['migration'];
             }
         }
@@ -66,7 +66,7 @@ class MigrateRollback extends Command
                 $this->cosmo->finish();
                 $this->cosmo->commandFail('nothing ran');
             } else {
-                foreach (Schema::select('migrations')->where('step', $this->step)->make() as $migration) {
+                foreach (Schema::select('migrations')->where('step', $this->step)->get() as $migration) {
                     $this->rollback_migrations[] = $migration['migration'];
                 }
 
@@ -84,7 +84,7 @@ class MigrateRollback extends Command
 
                     ClassManager::callStaticFunction($class, 'down');
 
-                    Schema::delete('migrations', 'migration', $this->file_name);
+                    Schema::delete('migrations')->where('migrations', $this->file_name)->get();
                     $this->cosmo->fileSuccessRow($this->file_name, 'rollback');
                 } else {
                     $_SERVER['COMMAND'] = 'php cosmo migration:rollback ' . $this->file_name;
@@ -124,7 +124,7 @@ class MigrateRollback extends Command
 
                 ClassManager::callStaticFunction($class, 'down');
 
-                Schema::delete('migrations', 'migration', $migration);
+                Schema::delete('migrations')->where('migration', $migration)->get();
 
                 $this->cosmo->fileSuccessRow($migration, 'rollback');
             } else {

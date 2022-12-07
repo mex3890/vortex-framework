@@ -3,9 +3,10 @@
 namespace Core\Abstractions;
 
 use Core\Core\Log\Log;
+use Exception;
 use Monolog\Level;
 
-abstract class VortexException extends \Exception
+abstract class VortexException extends Exception
 {
     public function __construct(string $message = "", int $code = 0, int $level = null)
     {

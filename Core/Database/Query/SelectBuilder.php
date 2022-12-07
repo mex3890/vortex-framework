@@ -8,11 +8,11 @@ use Core\Abstractions\Model;
 use Core\Adapters\Collection;
 use Core\Database\QueryExecutor;
 use Core\Exceptions\ViolationMinimalPagesBeforeBreakLinksList;
+use Core\Helpers\ObjectConstructor;
 use Core\Request\Paginator;
 use Core\Traits\JoinClauses;
 use Core\Traits\QueryConditionals;
 use Core\Traits\QueryFilters;
-use Dotenv\Dotenv;
 
 class SelectBuilder extends QueryBuilder
 {
@@ -26,6 +26,7 @@ class SelectBuilder extends QueryBuilder
 
     /**
      * @param string $table
+     * @param Model|null $model
      * @param array|string|null $columns
      * If you do not need to specify the columns and <br>do not want to use the default value ( * ), use null
      */
@@ -170,7 +171,7 @@ class SelectBuilder extends QueryBuilder
      * @param bool $with_previous_button
      * @param bool $with_next_button
      * @param int $max_number_before_break
-     * @return void
+     * @return bool|Collection|string
      * @throws ViolationMinimalPagesBeforeBreakLinksList
      */
     public function pagination(
@@ -178,7 +179,7 @@ class SelectBuilder extends QueryBuilder
         bool $with_previous_button = true,
         bool $with_next_button = true,
         int  $max_number_before_break = 10
-    )
+    ): bool|string|Collection
     {
         if ($max_number_before_break < 7) {
             throw new ViolationMinimalPagesBeforeBreakLinksList($max_number_before_break);
@@ -245,9 +246,14 @@ class SelectBuilder extends QueryBuilder
         $collection = $response->execute();
         $newCollection = new Collection();
 
-        foreach ($collection as $model) {
-            $model = $this->mountModelObject($this->model, $model);
-            $newCollection->append($model);
+        if (isset($this->model)) {
+            foreach ($collection as $model) {
+                $model = ObjectConstructor::mountModelObject($this->model, $model);
+
+                $newCollection->append($model);
+            }
+        } else {
+            $newCollection = $collection;
         }
 
         return $newCollection;

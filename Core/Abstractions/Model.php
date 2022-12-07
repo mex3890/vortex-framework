@@ -9,6 +9,7 @@ use Core\Database\Query\UpdateBuilder;
 use Core\Database\Schema;
 use Core\Exceptions\FailedOnCreateObjectByModel;
 use Core\Exceptions\MissingArguments;
+use Core\Helpers\ObjectConstructor;
 
 abstract class Model
 {
@@ -21,11 +22,11 @@ abstract class Model
     }
 
     /**
-     * @return $this
+     * @return object
      * @throws FailedOnCreateObjectByModel
      * @throws MissingArguments
      */
-    public function create(): static
+    public function create(): object
     {
         if (isset($this->args)) {
             $model = Schema::insert($this->table, $this->args)->get();
@@ -34,7 +35,7 @@ abstract class Model
                 throw new FailedOnCreateObjectByModel(self::class);
             }
 
-            return self::createObjectByArray($this->args);
+            return ObjectConstructor::mountModelObject(new static(), $this->args);
         }
 
         throw new MissingArguments('create');

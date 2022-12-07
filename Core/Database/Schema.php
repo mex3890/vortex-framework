@@ -4,6 +4,7 @@ namespace Core\Database;
 
 use Core\Abstractions\Enums\SqlExpressions;
 use Core\Abstractions\Model;
+use Core\Adapters\Collection;
 use Core\Database\Query\CreateTableBuilder;
 use Core\Database\Query\DeleteBuilder;
 use Core\Database\Query\DropTableBuilder;
@@ -37,6 +38,7 @@ class Schema
     /**
      * @param string $table
      * @param array|string $select_columns
+     * @param Model|null $model
      * @return SelectBuilder
      */
     public static function select(string $table, array|string $select_columns = '*', ?Model $model = null): SelectBuilder
@@ -82,7 +84,7 @@ class Schema
      * @param string $column
      * @return bool|array
      */
-    public static function last(string $table, string $column = 'id'): bool|array
+    public static function last(string $table, string $column = 'id'): bool|Collection
     {
         $query = new SelectBuilder($table);
         return $query->orderBy([$column => SqlExpressions::DESC->value])
@@ -95,7 +97,7 @@ class Schema
      * @param string $column
      * @return bool|array
      */
-    public static function first(string $table, string $column = 'id'): bool|array
+    public static function first(string $table, string $column = 'id'): bool|Collection
     {
         $query = new SelectBuilder($table);
         return $query->orderBy([$column => SqlExpressions::ASC->value])

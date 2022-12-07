@@ -6,5 +6,5 @@ use Core\Abstractions\Model;
 
 class MountModel extends Model
 {
-    protected string $table = 'table_name';
+    public string $table = 'table_name';
 }
