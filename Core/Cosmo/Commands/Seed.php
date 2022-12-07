@@ -23,10 +23,10 @@ class Seed extends Command
     private Cosmo $cosmo;
     private const SEEDER_ROOT_PATH = 'App\\Seeds\\';
 
-    public function __construct(string|null $file_name = null)
+    public function __construct()
     {
         $this->cosmo = new Cosmo();
-        parent::__construct('');
+        parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

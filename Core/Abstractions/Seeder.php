@@ -19,7 +19,7 @@ abstract class Seeder
 
         if ($factory instanceof Factory) {
             for ($i = 0; $i < $count; $i++) {
-                Schema::insert($table, $factory::frame());
+                Schema::insert($table, $factory::frame())->get();
             }
         }
     }

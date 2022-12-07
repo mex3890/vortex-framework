@@ -19,7 +19,7 @@ class MigrateList extends Command
     private array $ran_migrations = [];
     private Cosmo $cosmo;
 
-    public function __construct(string|null $file_name = null)
+    public function __construct()
     {
         $this->cosmo = new Cosmo();
         parent::__construct();

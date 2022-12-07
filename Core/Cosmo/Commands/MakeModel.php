@@ -26,11 +26,10 @@ class MakeModel extends Command
     private const MODEL_TABLE_NAME = 'table_name';
     private Cosmo $cosmo;
 
-    public function __construct(string|null $file_name = null)
+    public function __construct()
     {
         $this->cosmo = new Cosmo();
         parent::__construct();
-        $this->file_name = $file_name;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
