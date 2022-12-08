@@ -12,7 +12,6 @@ class ColumnBuilder
     public string $column_name = '';
     public string $column_type = '';
     public int|null $column_length = null;
-    public int|null $column_decimal_length = null;
     public array|null $options;
     public array $column_constraints = [];
     private const FK_PREFIX = 'FK_';
@@ -22,7 +21,6 @@ class ColumnBuilder
      * @param string $column_name
      * @param string $column_type
      * @param int|null $column_length
-     * @param int|null $column_decimal_length
      * @param array|null $options
      */
     public function __construct(
@@ -30,7 +28,6 @@ class ColumnBuilder
         string $column_name,
         string $column_type,
         ?int $column_length = null,
-        ?int $column_decimal_length = null,
         ?array $options = null
     )
     {
@@ -38,7 +35,6 @@ class ColumnBuilder
         $this->column_name = $column_name;
         $this->column_type = $column_type;
         $this->column_length = $column_length;
-        $this->column_decimal_length = $column_decimal_length;
         $this->options = $options;
     }
 
