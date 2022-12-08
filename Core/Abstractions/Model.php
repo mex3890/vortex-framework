@@ -55,7 +55,7 @@ abstract class Model
      * @param array $new_values
      * @return UpdateBuilder
      */
-    public function update(array $new_values): UpdateBuilder
+    public static function update(array $new_values): UpdateBuilder
     {
         $model = new static([]);
 
