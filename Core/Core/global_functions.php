@@ -83,21 +83,6 @@ function view(string $view_name, array $params = []): void
     require __DIR__ . '/../../../../../public/index.php';
 }
 
-#[NoReturn] function dd(...$vars): void
-{
-    foreach ($vars as $var) {
-        echo '<pre>' . var_export($var, true) . '</pre>';
-    }
-    die();
-}
-
-function dump(...$vars): void
-{
-    foreach ($vars as $var) {
-        echo '<pre>' . var_export($var, true) . '</pre>';
-    }
-}
-
 function old(string $key)
 {
     return $_GET['OLD_ATTRIBUTES'][$key] ?? '';
