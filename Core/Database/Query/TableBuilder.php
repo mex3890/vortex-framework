@@ -51,9 +51,25 @@ class TableBuilder
     /**
      * @throws InvalidColumnName
      */
+    public function bool(string $column_name): ColumnBuilder
+    {
+        return $this->makeColumn($column_name, SqlColumnTypes::BOOL->value);
+    }
+
+    /**
+     * @throws InvalidColumnName
+     */
     public function boolean(string $column_name): ColumnBuilder
     {
         return $this->makeColumn($column_name, SqlColumnTypes::BOOLEAN->value);
+    }
+
+    /**
+     * @throws InvalidColumnName
+     */
+    public function char(string $column_name, int $var_length): ColumnBuilder
+    {
+        return $this->makeColumn($column_name, SqlColumnTypes::CHAR->value, $var_length);
     }
 
     /**
@@ -75,9 +91,17 @@ class TableBuilder
     /**
      * @throws InvalidColumnName
      */
-    public function double(string $column_name, int $column_length, int $column_decimal_length): ColumnBuilder
+    public function decimal(string $column_name): ColumnBuilder
     {
-        return $this->makeColumn($column_name, SqlColumnTypes::DOUBLE->value, $column_length, $column_decimal_length);
+        return $this->makeColumn($column_name, SqlColumnTypes::DECIMAL->value);
+    }
+
+    /**
+     * @throws InvalidColumnName
+     */
+    public function double(string $column_name): ColumnBuilder
+    {
+        return $this->makeColumn($column_name, SqlColumnTypes::DOUBLE->value);
     }
 
     /**
@@ -89,7 +113,6 @@ class TableBuilder
             $column_name,
             SqlColumnTypes::ENUM->value,
             null,
-            null,
             $options
         );
     }
@@ -97,9 +120,9 @@ class TableBuilder
     /**
      * @throws InvalidColumnName
      */
-    public function float(string $column_name, int $column_length, int $column_decimal_length): ColumnBuilder
+    public function float(string $column_name): ColumnBuilder
     {
-        return $this->makeColumn($column_name, SqlColumnTypes::FLOAT->value, $column_length, $column_decimal_length);
+        return $this->makeColumn($column_name, SqlColumnTypes::FLOAT->value);
     }
 
     /**
@@ -116,6 +139,30 @@ class TableBuilder
     public function int(string $column_name): ColumnBuilder
     {
         return $this->makeColumn($column_name, SqlColumnTypes::INT->value);
+    }
+
+    /**
+     * @throws InvalidColumnName
+     */
+    public function integer(string $column_name): ColumnBuilder
+    {
+        return $this->makeColumn($column_name, SqlColumnTypes::INT->value);
+    }
+
+    /**
+     * @throws InvalidColumnName
+     */
+    public function json(string $column_name): ColumnBuilder
+    {
+        return $this->makeColumn($column_name, SqlColumnTypes::JSON->value);
+    }
+
+    /**
+     * @throws InvalidColumnName
+     */
+    public function longBlob(string $column_name): ColumnBuilder
+    {
+        return $this->makeColumn($column_name, SqlColumnTypes::LONGBLOB->value);
     }
 
     /**
@@ -153,17 +200,30 @@ class TableBuilder
     /**
      * @throws InvalidColumnName
      */
-    public function text(string $column_name): ColumnBuilder
+    public function set(string $column_name, array $options): ColumnBuilder
     {
-        return $this->makeColumn($column_name, SqlColumnTypes::TEXT->value);
+        return $this->makeColumn(
+            $column_name,
+            SqlColumnTypes::SET->value,
+            null,
+            $options
+        );
     }
 
     /**
      * @throws InvalidColumnName
      */
-    public function tinyText(string $column_name): ColumnBuilder
+    public function smallInt(string $column_name): ColumnBuilder
     {
-        return $this->makeColumn($column_name, SqlColumnTypes::TINYTEXT->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::SMALLINT->value);
+    }
+
+    /**
+     * @throws InvalidColumnName
+     */
+    public function text(string $column_name): ColumnBuilder
+    {
+        return $this->makeColumn($column_name, SqlColumnTypes::TEXT->value);
     }
 
     /**
@@ -177,7 +237,7 @@ class TableBuilder
     /**
      * @throws InvalidColumnName
      */
-    public function timeStamp(string $column_name): ColumnBuilder
+    public function timestamp(string $column_name): ColumnBuilder
     {
         return $this->makeColumn($column_name, SqlColumnTypes::TIMESTAMP->value);
     }
@@ -185,17 +245,32 @@ class TableBuilder
     /**
      * @throws InvalidColumnName
      */
-    public function uuid(string $column_name): ColumnBuilder
+    public function tinyBlob(string $column_name): ColumnBuilder
     {
-        return $this->makeColumn($column_name, SqlColumnTypes::VARCHAR->value);
+        return $this->makeColumn($column_name, SqlColumnTypes::TINYBLOB->value);
     }
 
     /**
      * @throws InvalidColumnName
      */
-    public function char(string $column_name, int $var_length): ColumnBuilder
+    public function tinyInt(string $column_name): ColumnBuilder
     {
-        return $this->makeColumn($column_name, SqlColumnTypes::CHAR->value, $var_length);
+        return $this->makeColumn($column_name, SqlColumnTypes::TINYINT->value);
+    }
+    /**
+     * @throws InvalidColumnName
+     */
+    public function tinyText(string $column_name): ColumnBuilder
+    {
+        return $this->makeColumn($column_name, SqlColumnTypes::TINYTEXT->value);
+    }
+
+    /**
+     * @throws InvalidColumnName
+     */
+    public function uuid(string $column_name = 'id'): ColumnBuilder
+    {
+        return $this->makeColumn($column_name, SqlColumnTypes::VARCHAR->value);
     }
 
     /**
@@ -217,14 +292,6 @@ class TableBuilder
     /**
      * @throws InvalidColumnName
      */
-    public function smallInt(string $column_name): ColumnBuilder
-    {
-        return $this->makeColumn($column_name, SqlColumnTypes::SMALLINT->value);
-    }
-
-    /**
-     * @throws InvalidColumnName
-     */
     public function year(string $column_name): ColumnBuilder
     {
         return $this->makeColumn($column_name, SqlColumnTypes::YEAR->value);
@@ -237,7 +304,6 @@ class TableBuilder
         string $column_name,
         string $column_type,
         int $column_length = null,
-        int $column_decimal_length = null,
         array $options = null
     ): ColumnBuilder
     {
@@ -250,7 +316,6 @@ class TableBuilder
             $column_name,
             $column_type,
             $column_length,
-            $column_decimal_length,
             $options
         );
 
