@@ -44,4 +44,14 @@ class Collection extends ArrayObject
     {
         $this->uksort($callable);
     }
+
+    public function first()
+    {
+        return $this[0];
+    }
+
+    public function last()
+    {
+        return $this[$this->count() - 1];
+    }
 }
