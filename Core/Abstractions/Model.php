@@ -65,21 +65,21 @@ abstract class Model
     /**
      * @return bool|Collection
      */
-    public static function first(): bool|Collection
+    public static function first(): bool|Model
     {
         $model = new static([]);
 
-        return Schema::first($model->table);
+        return Schema::first($model->table, 'id', $model);
     }
 
     /**
      * @return bool|Collection
      */
-    public static function last(): bool|Collection
+    public static function last(): bool|Model
     {
         $model = new static([]);
 
-        return Schema::last($model->table);
+        return Schema::last($model->table, 'id', $model);
     }
 
     public static function find(string|array $select_columns = '*'): SelectBuilder
