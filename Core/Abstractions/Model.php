@@ -6,9 +6,14 @@ use Core\Adapters\Collection;
 use Core\Database\Query\DeleteBuilder;
 use Core\Database\Query\SelectBuilder;
 use Core\Database\Query\UpdateBuilder;
+use Core\Database\Relationship\BelongsTo;
+use Core\Database\Relationship\BelongsToMany;
+use Core\Database\Relationship\HasMany;
+use Core\Database\Relationship\HasOne;
 use Core\Database\Schema;
 use Core\Exceptions\FailedOnCreateObjectByModel;
 use Core\Exceptions\MissingArguments;
+use Core\Helpers\ClassManager;
 use Core\Helpers\ObjectConstructor;
 
 abstract class Model
@@ -86,6 +91,38 @@ abstract class Model
     {
         $model = new static();
 
-        return Schema::select($model->table, $select_columns, new static);
+        return Schema::select($model->table, $select_columns, $model);
+    }
+
+    protected function hasOne(string $parent, string $main_column = 'id', string $secondary_column = 'null'): SelectBuilder
+    {
+        $hasOne = new HasOne(static::class, $parent, $this->id);
+        return $hasOne->mount();
+    }
+
+    protected function hasMany(string $parent): SelectBuilder
+    {
+        $hasMany = new HasMany(static::class, $parent, $this->id);
+        return $hasMany->mount();
+    }
+
+    protected function belongsTo(string $parent): SelectBuilder
+    {
+        $foreign_key = strtolower(ClassManager::getClassName($parent, false)) . '_id';
+        $belongsTo = new BelongsTo(static::class, $parent, $this->$foreign_key);
+        return $belongsTo->mount();
+    }
+
+    protected function belongsToMany(string $parent, string $pivot_table = null): SelectBuilder
+    {
+        $belongsToMany = new BelongsToMany(
+            static::class,
+            $parent,
+            $this->id,
+            'id',
+            null,
+            $pivot_table
+        );
+        return $belongsToMany->mount();
     }
 }

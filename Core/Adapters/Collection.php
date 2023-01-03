@@ -45,13 +45,36 @@ class Collection extends ArrayObject
         $this->uksort($callable);
     }
 
-    public function first()
+    /**
+     * @return false|mixed
+     */
+    public function first(): mixed
     {
+        if ($this->isEmpty()) {
+            return false;
+        }
+
         return $this[0];
     }
 
-    public function last()
+    /**
+     * @return false|mixed
+     */
+    public function last(): mixed
     {
+        if ($this->isEmpty()) {
+            return false;
+        }
+
         return $this[$this->count() - 1];
+    }
+
+    public function isEmpty(): bool
+    {
+        if ($this->count() === 0) {
+            return true;
+        }
+
+        return false;
     }
 }

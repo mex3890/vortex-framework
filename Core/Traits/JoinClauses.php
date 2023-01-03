@@ -113,14 +113,10 @@ trait JoinClauses
             PhpExtra::WHITE_SPACE->value .
             SqlExpressions::ON->value .
             PhpExtra::WHITE_SPACE->value .
-            $this->table .
-            PhpExtra::END_POINT->value .
             $main_conditional_column .
             PhpExtra::WHITE_SPACE->value .
             PhpExtra::EQUAL_OPERATOR->value .
             PhpExtra::WHITE_SPACE->value .
-            $table .
-            PhpExtra::END_POINT->value .
             $second_conditional_column;
     }
 

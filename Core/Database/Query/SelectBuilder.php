@@ -34,12 +34,16 @@ class SelectBuilder extends QueryBuilder
     {
         parent::__construct($table);
 
-        if ($columns !== '' && $columns !== null) {
-            $this->columns = $columns;
-        }
-
         if ($model) {
             $this->model = $model;
+        }
+
+        if ($columns !== '' && $columns !== null) {
+            if ($model) {
+                $this->columns = $this->setColumnsTable($columns);
+            } else {
+                $this->columns = $columns;
+            }
         }
     }
 
@@ -227,10 +231,10 @@ class SelectBuilder extends QueryBuilder
         }
     }
 
-    public function get(): Collection|bool|string
+    public function get(): Collection|bool|string|Model
     {
         parent::get();
-
+        dump($this->query);
         $response = new QueryExecutor(true, $this->query);
 
         if (isset($this->pagination_params)) {
@@ -247,10 +251,21 @@ class SelectBuilder extends QueryBuilder
         $newCollection = new Collection();
 
         if (isset($this->model)) {
-            foreach ($collection as $model) {
-                $model = ObjectConstructor::mountModelObject($this->model, $model);
+            if ($collection->count() === 1) {
+                $newCollection = new $this->model;
 
-                $newCollection->append($model);
+                foreach ($collection->getArrayCopy()[0] as $key => $value) {
+                    $newCollection->$key = $value;
+                }
+
+                unset($newCollection->table);
+                unset($newCollection->args);
+            } else {
+                foreach ($collection as $model) {
+                    $model = ObjectConstructor::mountModelObject($this->model, $model);
+
+                    $newCollection->append($model);
+                }
             }
         } else {
             $newCollection = $collection;
@@ -265,11 +280,25 @@ class SelectBuilder extends QueryBuilder
             $expression_column .= PhpExtra::WHITE_SPACE->value . 'AS' . PhpExtra::WHITE_SPACE->value . $alias;
         }
 
-
         if (!isset($this->columns)) {
             $this->columns = $expression_column;
         } else {
             $this->columns .= PhpExtra::COMMA_WHITE_SPACE->value . $expression_column;
         }
+    }
+
+    private function setColumnsTable(array|string $columns): array|string
+    {
+        if (is_array($columns)) {
+            $new_columns = [];
+
+            foreach ($columns as $column) {
+                $new_columns[] = "{$this->model->table}.$column";
+            }
+
+            return $new_columns;
+        }
+
+        return "{$this->model->table}.$columns";
     }
 }
