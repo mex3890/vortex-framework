@@ -37,11 +37,4 @@ abstract class Relation
     {
         return strtolower(ClassManager::getClassName($model_name, false)) . '_id';
     }
-
-    public function withPivotTable(string $pivot_table): static
-    {
-        $this->pivot_table = $pivot_table;
-
-        return $this;
-    }
 }
