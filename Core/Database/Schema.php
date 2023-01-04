@@ -90,7 +90,7 @@ class Schema
         $query = new SelectBuilder($table, '*', $model);
         return $query->orderBy([$column => SqlExpressions::DESC->value])
             ->limit(1)
-            ->get()->last();
+            ->get();
     }
 
     /**
@@ -104,6 +104,6 @@ class Schema
         $query = new SelectBuilder($table, '*', $model);
         return $query->orderBy([$column => SqlExpressions::ASC->value])
             ->limit(1)
-            ->get()->first();
+            ->get();
     }
 }
