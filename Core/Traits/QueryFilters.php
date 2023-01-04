@@ -21,7 +21,7 @@ trait QueryFilters
 
     public function limit(int $count, int $initial_limit = null): static
     {
-        $this->filters['limit'] = SqlExpressions::LIMIT->value .
+        $this->filters['LIMIT'] = SqlExpressions::LIMIT->value .
             PhpExtra::WHITE_SPACE->value .
             ($initial_limit ? "$count, $initial_limit" : $count);
 

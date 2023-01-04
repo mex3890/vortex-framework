@@ -64,10 +64,18 @@ trait QueryConditionals
      * @param string $operator
      * @return $this
      */
-    public function where(string $column, string|int $value, string $operator = '='): static
+    public function where(string $column, string|int $value, string $operator = '=', ?string $table = null): static
     {
         $this->has_condition = true;
         $value = StringFormatter::escapeQuotes($value);
+
+        if ($table) {
+            $column = "$table.$column";
+        } else {
+            if ($this->model) {
+                $column = "{$this->model->table}.$column";
+            }
+        }
 
         $this->conditionals[SqlExpressions::WHERE->value] = SqlExpressions::WHERE->value .
             PhpExtra::WHITE_SPACE->value .

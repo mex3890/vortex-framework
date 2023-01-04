@@ -82,11 +82,12 @@ class Schema
     /**
      * @param string $table
      * @param string $column
-     * @return bool|array
+     * @param Model|null $model
+     * @return bool|Model|Collection|array
      */
-    public static function last(string $table, string $column = 'id'): bool|Collection
+    public static function last(string $table, string $column = 'id', ?Model $model = null): bool|Model|Collection|array
     {
-        $query = new SelectBuilder($table);
+        $query = new SelectBuilder($table, '*', $model);
         return $query->orderBy([$column => SqlExpressions::DESC->value])
             ->limit(1)
             ->get();
@@ -95,11 +96,12 @@ class Schema
     /**
      * @param string $table
      * @param string $column
-     * @return bool|array
+     * @param Model|null $model
+     * @return bool|Model|Collection|array
      */
-    public static function first(string $table, string $column = 'id'): bool|Collection
+    public static function first(string $table, string $column = 'id', ?Model $model = null): bool|Model|Collection|array
     {
-        $query = new SelectBuilder($table);
+        $query = new SelectBuilder($table, '*', $model);
         return $query->orderBy([$column => SqlExpressions::ASC->value])
             ->limit(1)
             ->get();
