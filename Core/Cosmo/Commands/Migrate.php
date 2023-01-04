@@ -117,10 +117,12 @@ class Migrate extends Command
 
     private function setCurrentStep()
     {
-        if (Schema::last('migrations') === false || Schema::last('migrations')->count() === 0) {
+        $last_ran_migration = Schema::last('migrations');
+
+        if ($last_ran_migration === false) {
             $this->step = 0;
         } else {
-            $this->step = Schema::last('migrations')[0]['step'];
+            $this->step = Schema::last('migrations')['step'];
             $this->step += 1;
         }
     }

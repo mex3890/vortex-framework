@@ -85,6 +85,31 @@ class StringFormatter
         return $string;
     }
 
+    public static function singularize(string $string)
+    {
+        switch ($string) {
+            case str_ends_with($string, 'en'):
+                $string = substr($string, 0, -2) . 'an';
+                break;
+            case str_ends_with($string, 'ies'):
+                $string = substr($string, 0, -3) . 'y';
+                break;
+            case preg_match("/[oxz]es$/", $string) ||
+                str_ends_with($string, "shes") ||
+                str_ends_with($string, "sses") ||
+                str_ends_with($string, "ches"):
+                $string = substr($string, 0, -2);
+                break;
+            case str_ends_with($string, 'ves'):
+                $string = substr($string, 0, -3) . 'f';
+                break;
+            case str_ends_with($string, 's'):
+                $string = substr($string, 0, -1);
+                break;
+        }
+        return $string;
+    }
+
     public static function removeWhiteSpace(string $string): string
     {
         return str_replace(PhpExtra::WHITE_SPACE->value, '', $string);
@@ -148,10 +173,10 @@ class StringFormatter
      * @return string
      */
     public static function mountStringByArray(
-        array $array,
-        bool $is_associative = false,
+        array  $array,
+        bool   $is_associative = false,
         string $separator = ',',
-        bool $with_space = true
+        bool   $with_space = true
     ): string
     {
         $count = count($array);

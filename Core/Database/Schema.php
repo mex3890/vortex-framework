@@ -83,27 +83,27 @@ class Schema
      * @param string $table
      * @param string $column
      * @param Model|null $model
-     * @return bool|Model
+     * @return bool|Model|Collection|array
      */
-    public static function last(string $table, string $column = 'id', ?Model $model = null): bool|Model
+    public static function last(string $table, string $column = 'id', ?Model $model = null): bool|Model|Collection|array
     {
         $query = new SelectBuilder($table, '*', $model);
         return $query->orderBy([$column => SqlExpressions::DESC->value])
             ->limit(1)
-            ->get()->last();
+            ->get();
     }
 
     /**
      * @param string $table
      * @param string $column
      * @param Model|null $model
-     * @return bool|Model
+     * @return bool|Model|Collection|array
      */
-    public static function first(string $table, string $column = 'id', ?Model $model = null): bool|Model
+    public static function first(string $table, string $column = 'id', ?Model $model = null): bool|Model|Collection|array
     {
         $query = new SelectBuilder($table, '*', $model);
         return $query->orderBy([$column => SqlExpressions::ASC->value])
             ->limit(1)
-            ->get()->first();
+            ->get();
     }
 }
