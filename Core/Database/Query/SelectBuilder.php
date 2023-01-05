@@ -22,7 +22,7 @@ class SelectBuilder extends QueryBuilder
     private array $select_constraints;
     private string $pagination_links;
     private array $pagination_params;
-    private Model $model;
+    private ?Model $model;
 
     /**
      * @param string $table
