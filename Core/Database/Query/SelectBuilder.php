@@ -234,7 +234,7 @@ class SelectBuilder extends QueryBuilder
     public function get(): Collection|bool|string|Model
     {
         parent::get();
-        dump($this->query);
+
         $response = new QueryExecutor(true, $this->query);
 
         if (isset($this->pagination_params)) {
