@@ -26,58 +26,63 @@ trait QueryConditionals
     public function exists(): static
     {
         $this->has_condition = true;
+        return $this;
     }
 
     public function first(): static
     {
         $this->has_condition = true;
-
+        return $this;
     }
 
     public function having(): static
     {
         $this->has_condition = true;
-
+        return $this;
     }
 
     public function isNotNull(): static
     {
         $this->has_condition = true;
-
+        return $this;
     }
 
     public function isNull(): static
     {
         $this->has_condition = true;
-
+        return $this;
     }
 
     public function last(): static
     {
         $this->has_condition = true;
-
+        return $this;
     }
 
     /**
      * @param string $column
      * @param string|int $value
      * @param string $operator
+     * @param string|null $table
      * @return $this
      */
     public function where(string $column, string|int $value, string $operator = '=', ?string $table = null): static
     {
+        $expression = SqlExpressions::WHERE->value;
         $this->has_condition = true;
         $value = StringFormatter::escapeQuotes($value);
 
         if ($table) {
             $column = "$table.$column";
-        } else {
-            if ($this->model) {
-                $column = "{$this->model->table}.$column";
-            }
+        } elseif (!is_null($this->model)) {
+            $column = "{$this->model->table}.$column";
         }
 
-        $this->conditionals[SqlExpressions::WHERE->value] = SqlExpressions::WHERE->value .
+        if (!is_null($this->conditionals[SqlExpressions::WHERE->value])) {
+            $expression = SqlExpressions::AND->value;
+        }
+
+        $this->conditionals[SqlExpressions::WHERE->value][] = $expression .
             PhpExtra::WHITE_SPACE->value .
             $column .
             PhpExtra::WHITE_SPACE->value .
@@ -111,7 +116,7 @@ trait QueryConditionals
     public function whereBetween(): static
     {
         $this->has_condition = true;
-
+        return $this;
     }
 
     public function whereIn(string $column, callable|array $in_clause): static

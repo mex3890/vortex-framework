@@ -3,10 +3,19 @@
 namespace Core\Database\Relationship;
 
 use Core\Database\Query\SelectBuilder;
-use Core\Database\Schema;
 
 class HasOne extends Relation
 {
+    public function __construct(
+        string  $main_model_class,
+        string  $secondary_model_class,
+        int     $main_id,
+        ?string $foreign_key = null,
+    )
+    {
+        parent::__construct($main_model_class, $secondary_model_class, $main_id, null, $foreign_key);
+    }
+
     public function mount(): SelectBuilder
     {
         if (is_null($this->secondary_column)) {
