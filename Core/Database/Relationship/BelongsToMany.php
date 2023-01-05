@@ -3,15 +3,10 @@
 namespace Core\Database\Relationship;
 
 use Core\Database\Query\SelectBuilder;
-use Core\Helpers\ClassManager;
 use Core\Helpers\StringFormatter;
-use Dotenv\Util\Str;
 
 class BelongsToMany extends Relation
 {
-    /**
-     * @return SelectBuilder
-     */
     public function mount(): SelectBuilder
     {
         if (is_null($this->secondary_column)) {

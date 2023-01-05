@@ -3,7 +3,6 @@
 namespace Core\Database\Relationship;
 
 use Core\Database\Query\SelectBuilder;
-use Core\Database\Schema;
 
 class BelongsTo extends Relation
 {
