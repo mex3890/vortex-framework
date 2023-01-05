@@ -74,10 +74,8 @@ trait QueryConditionals
 
         if ($table) {
             $column = "$table.$column";
-        } else {
-            if ($this->model) {
-                $column = "{$this->model->table}.$column";
-            }
+        } elseif (!is_null($this->model)) {
+            $column = "{$this->model->table}.$column";
         }
 
         if (!is_null($this->conditionals[SqlExpressions::WHERE->value])) {
