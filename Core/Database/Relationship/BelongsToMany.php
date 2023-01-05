@@ -23,11 +23,11 @@ class BelongsToMany extends Relation
             $pivot_table_name = "$tables[0]_$tables[1]";
         }
         if (is_null($this->main_column)) {
-            $this->main_column = $singular_main_table . '_id';
+            $this->main_column = "{$singular_main_table}_id";
         }
 
         if (is_null($this->secondary_column)) {
-            $this->secondary_column = $singular_secondary_table . '_id';
+            $this->secondary_column = "{$singular_secondary_table}_id";
         }
 
         $select_builder = new SelectBuilder($this->secondary_model->table, '*', $this->secondary_model);
