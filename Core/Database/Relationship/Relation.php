@@ -9,7 +9,7 @@ abstract class Relation
 {
     protected Model $main_model;
     protected Model $secondary_model;
-    protected string $main_column;
+    protected ?string $main_column;
     protected ?string $secondary_column;
     protected ?string $pivot_table;
     protected int $main_id;
