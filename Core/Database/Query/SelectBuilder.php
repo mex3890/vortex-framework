@@ -196,7 +196,13 @@ class SelectBuilder extends QueryBuilder
             'max_number_before_break' => $max_number_before_break
         ];
 
-        return $this->get();
+        $collection = $this->get();
+
+        if($collection instanceof Model) {
+            $collection = new Collection([$collection]);
+        }
+
+        return $collection;
     }
 
     private function makePagination(Collection $collection)
