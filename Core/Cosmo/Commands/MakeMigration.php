@@ -73,6 +73,7 @@ class MakeMigration extends Command
     private function mountMigrationName(string $migration_name): string
     {
         $migration_name = lcfirst($migration_name);
-        return StringFormatter::retrieveSnakeCase(DateTime::currentDate() . "_$migration_name") . '.php';
+        $migration_name = StringFormatter::retrieveSnakeCase(DateTime::currentDateTime() . "_$migration_name") . '.php';
+        return str_replace(':', '_', $migration_name);
     }
 }
