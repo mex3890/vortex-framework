@@ -60,11 +60,11 @@ abstract class Model
      * @param array $new_values
      * @return UpdateBuilder
      */
-    public static function update(array $new_values): UpdateBuilder
+    public function update(array $new_values): UpdateBuilder
     {
         $model = new static([]);
 
-        return Schema::update($model->table, $new_values);
+        return Schema::update($model->table, $new_values)->where('id', $this->id);
     }
 
     /**

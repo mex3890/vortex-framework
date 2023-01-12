@@ -1,7 +1,9 @@
 <?php
 
+use Core\Exceptions\InvalidRequestMethod;
 use Core\Exceptions\MissingCsrfToken;
 use Core\Exceptions\MissingPaginationLinks;
+use Core\Exceptions\RouteNotFound;
 use Core\Galaxy\Galaxy;
 use Core\Helpers\Environment;
 use Core\Request\Csrf;
@@ -150,4 +152,38 @@ function vortexRedirect(): string
     $last_route = $_GET['LAST_ROUTE'];
 
     return "<input name='vortex_redirect' type='hidden' value='$last_route'>";
+}
+
+/**
+ * @throws InvalidRequestMethod
+ */
+function method(string $method): string
+{
+    $method = strtoupper($method);
+
+    if (in_array($method, ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])) {
+        return "<input name='vortex_method' type='hidden' value='$method'>";
+    } else {
+        throw new InvalidRequestMethod($method);
+    }
+}
+
+/**
+ * @throws RouteNotFound
+ */
+function route(string $route_name, array $parameters = []): string
+{
+    foreach (ROUTES as $route) {
+        if ($route['name'] === $route_name) {
+            $route_path = $route['route'];
+
+            foreach ($parameters as $key => $value) {
+                $route_path = str_replace("\${$key}", $value, $route_path);
+            }
+
+            return \Core\Helpers\Uri::getRootPath() . ($route_path === false ? $route['route'] : $route_path);
+        }
+    }
+
+    throw new RouteNotFound($route_name);
 }
